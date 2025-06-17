@@ -1,26 +1,45 @@
-from flask import Blueprint, jsonify
-from data.portfolio_data import SKILLS_DATA
+from flask import Blueprint
+from ..data.portfolio_data import PORTFOLIO_DATA
+from ..utils.responses import success_response, error_response
 
-bp = Blueprint('skills', __name__, url_prefix='/api')
+bp = Blueprint('skills', __name__)
 
 @bp.route('/skills', methods=['GET'])
 def get_skills():
     """Get all skills data"""
-    return jsonify({
-        'success': True,
-        'data': SKILLS_DATA
-    })
+    try:
+        return success_response(data=PORTFOLIO_DATA["skills"])
+    except KeyError:
+        return error_response(
+            error='Skills data not found',
+            status_code=500
+        )
+    except Exception as e:
+        return error_response(
+            error=str(e),
+            status_code=500
+        )
 
 @bp.route('/skills/<category>', methods=['GET'])
 def get_skills_by_category(category):
     """Get skills by category (technical or soft)"""
-    if category in ['technical', 'soft']:
-        return jsonify({
-            'success': True,
-            'data': SKILLS_DATA.get(category, [])
-        })
-    else:
-        return jsonify({
-            'success': False,
-            'error': 'Invalid category. Use "technical" or "soft"'
-        }), 400
+    try:
+        skills = PORTFOLIO_DATA["skills"]
+        
+        if category in ['technical', 'soft']:
+            return success_response(data=skills.get(category, []))
+        else:
+            return error_response(
+                error='Invalid category. Use "technical" or "soft"',
+                status_code=400
+            )
+    except KeyError:
+        return error_response(
+            error='Skills data not found',
+            status_code=500
+        )
+    except Exception as e:
+        return error_response(
+            error=str(e),
+            status_code=500
+        )
