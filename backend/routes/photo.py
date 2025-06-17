@@ -12,7 +12,7 @@ def get_photos():
     except KeyError:
         return error_response(
             error='Photo data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(

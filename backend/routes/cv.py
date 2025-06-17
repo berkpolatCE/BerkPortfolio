@@ -12,7 +12,7 @@ def get_cv_info():
     except KeyError:
         return error_response(
             error='CV data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(
@@ -44,7 +44,7 @@ def download_cv():
     except KeyError:
         return error_response(
             error='CV data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(

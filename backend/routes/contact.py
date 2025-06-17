@@ -14,7 +14,7 @@ def get_contact():
     except KeyError:
         return error_response(
             error='Contact data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(

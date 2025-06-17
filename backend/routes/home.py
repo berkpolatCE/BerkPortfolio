@@ -12,7 +12,7 @@ def get_home():
     except KeyError:
         return error_response(
             error='Home data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(

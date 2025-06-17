@@ -12,7 +12,7 @@ def get_skills():
     except KeyError:
         return error_response(
             error='Skills data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(
@@ -36,7 +36,7 @@ def get_skills_by_category(category):
     except KeyError:
         return error_response(
             error='Skills data not found',
-            status_code=500
+            status_code=404
         )
     except Exception as e:
         return error_response(
