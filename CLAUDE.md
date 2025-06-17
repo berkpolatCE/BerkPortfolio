@@ -102,5 +102,15 @@ All API endpoints (except health check) are now versioned under `/api/v1`:
 
 - Backend entry: `backend/run.py`
 - Portfolio data: `backend/data/portfolio_data.py`
-- Frontend entry: TBD
-- Frontend configuration: TBD
+- Frontend entry: `frontend/pages/index.vue`
+- Frontend configuration: `frontend/nuxt.config.ts`
+
+## Frontend Features
+
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Smooth Animations**: GSAP integration for page transitions and scroll effects
+- **API Integration**: Seamless connection to Flask backend via composables
+- **Dynamic Routing**: Auto-generated routes for project detail pages
+- **SEO Ready**: Server-side rendering with Nuxt 3
+- **Modern Typography**: Google Fonts (Inter & Space Grotesk)
+- **Component-Based**: Reusable Vue components for maintainability

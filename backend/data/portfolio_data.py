@@ -2,27 +2,30 @@
 
 PORTFOLIO_DATA = {
     "home": {
-        "name": "Your Name",
-        "title": "Full Stack Developer",
-        "about": "Passionate developer with expertise in creating modern web applications. "
-                 "I enjoy solving complex problems and building scalable solutions.",
-        "image_url": "/static/images/profile.jpg",
-        "location": "Your City, Country",
-        "languages": ["English", "Other Language"],
-        "interests": ["Web Development", "Machine Learning", "Open Source"]
+        "name": "Berk Polat",
+        "title": "Computer Engineering Student",
+        "about": "A dedicated and passionate Computer Engineering student currently in the third year at Istanbul Okan University. "
+                 "Possesses advanced proficiency in C++ and Python, with intermediate skills in Java and Lua. "
+                 "Specializes in cybersecurity, actively engaging in practical learning and challenges on Hack The Box to enhance hands-on experience. "
+                 "Demonstrates advanced knowledge of both Linux and Windows operating systems. "
+                 "Eager to apply technical expertise and problem-solving skills in cybersecurity and software development roles.",
+        "image_url": "/images/profile.jpg",
+        "location": "Kartal, Istanbul, Turkey",
+        "languages": ["Turkish (Native)", "English (C1, 8.0 IELTS)"],
+        "interests": ["Web Application Security", "Network Enumeration", "Penetration Testing", "Vulnerability Assessment", "Cybersecurity Research"],
     },
     "photo": {
-        "profile_photo": "/static/images/profile.jpg",
+        "profile_photo": "/images/profile.jpg",
         "gallery": [
             {
                 "id": 1,
-                "url": "/static/images/photo1.jpg",
+                "url": "/images/photo1.jpg",
                 "caption": "Project showcase",
                 "date": "2024-01"
             },
             {
                 "id": 2,
-                "url": "/static/images/photo2.jpg",
+                "url": "/images/photo2.jpg",
                 "caption": "Team collaboration",
                 "date": "2024-02"
             }
@@ -31,12 +34,12 @@ PORTFOLIO_DATA = {
     "projects": [
         {
             "id": 1,
-            "title": "E-commerce Platform",
-            "description": "A full-stack e-commerce solution built with React and Node.js",
-            "technologies": ["React", "Node.js", "MongoDB", "Stripe API"],
-            "github_url": "https://github.com/yourusername/project1",
-            "live_url": "https://project1.example.com",
-            "image": "/static/images/project1.jpg",
+            "title": "BZTyping",
+            "description": "BZTyping is a powerful, customizable speech-to-text application that converts your spoken words into typed text in real-time.",
+            "technologies": ["OpenAI Whisper", "PyQT5"],
+            "github_url": "https://github.com/berkpolatCE/BZTyping",
+            "live_url": None,
+            "image": "/images/project1.jpg",
             "featured": True
         },
         {
@@ -46,7 +49,7 @@ PORTFOLIO_DATA = {
             "technologies": ["Vue.js", "Express", "PostgreSQL", "Socket.io"],
             "github_url": "https://github.com/yourusername/project2",
             "live_url": None,
-            "image": "/static/images/project2.jpg",
+            "image": "/images/project2.jpg",
             "featured": True
         },
         {
@@ -56,41 +59,43 @@ PORTFOLIO_DATA = {
             "technologies": ["Python", "Flask", "Chart.js", "OpenWeather API"],
             "github_url": "https://github.com/yourusername/project3",
             "live_url": "https://project3.example.com",
-            "image": "/static/images/project3.jpg",
+            "image": "/images/project3.jpg",
             "featured": False
         }
     ],
     "skills": {
         "technical": {
             "languages": [
+                {"name": "C++", "level": "90%"},
                 {"name": "Python", "level": "90%"},
-                {"name": "JavaScript", "level": "85%"},
-                {"name": "TypeScript", "level": "80%"},
-                {"name": "Java", "level": "75%"}
+                {"name": "Java", "level": "70%"},
+                {"name": "Lua", "level": "70%"}
             ],
             "frontend": [
-                {"name": "React", "level": "85%"},
+                {"name": "Nuxt.js", "level": "80%"},
                 {"name": "Vue.js", "level": "80%"},
-                {"name": "HTML/CSS", "level": "90%"},
-                {"name": "Tailwind CSS", "level": "85%"}
+                {"name": "Tailwind CSS", "level": "85%"},
+                {"name": "GSAP", "level": "75%"}
             ],
             "backend": [
-                {"name": "Node.js", "level": "85%"},
-                {"name": "Flask", "level": "90%"},
-                {"name": "Django", "level": "80%"},
-                {"name": "Express", "level": "85%"}
+                {"name": "Python", "level": "90%"},
+                {"name": "Flask", "level": "85%"}
             ],
-            "databases": [
-                {"name": "PostgreSQL", "level": "85%"},
-                {"name": "MongoDB", "level": "80%"},
-                {"name": "Redis", "level": "75%"},
-                {"name": "MySQL", "level": "80%"}
+            "cybersecurity": [
+                {"name": "Web Application Penetration Testing", "level": "85%"},
+                {"name": "Network Penetration Testing", "level": "80%"},
+                {"name": "Reverse Engineering", "level": "70%"},
+                {"name": "Threat Intelligence", "level": "75%"},
+                {"name": "DFIR (Digital Forensics & Incident Response)", "level": "70%"}
             ],
             "tools": [
-                {"name": "Git", "level": "90%"},
-                {"name": "Docker", "level": "80%"},
-                {"name": "AWS", "level": "75%"},
-                {"name": "CI/CD", "level": "80%"}
+                {"name": "Git", "level": "85%"},
+                {"name": "Linux", "level": "90%"},
+                {"name": "Windows", "level": "90%"},
+                {"name": "Nmap", "level": "80%"},
+                {"name": "Metasploit", "level": "75%"},
+                {"name": "SQLMap", "level": "75%"},
+                {"name": "Burp Suite", "level": "70%"}
             ]
         },
         "soft": [
@@ -103,16 +108,13 @@ PORTFOLIO_DATA = {
     },
     "cv": {
         "filename": "YourName_CV.pdf",
-        "url": "/static/files/cv.pdf",
+        "url": "/files/cv.pdf",
         "last_updated": "2024-03-01"
     },
     "contact": {
-        "email": "your.email@example.com",
-        "phone": "+1 234 567 8900",
-        "linkedin": "https://linkedin.com/in/yourusername",
-        "github": "https://github.com/yourusername",
-        "twitter": "https://twitter.com/yourusername",
-        "instagram": "https://instagram.com/yourusername",
-        "availability": "Open to opportunities"
+        "email": "berkpolat@gmail.com",
+        "linkedin": "https://linkedin.com/in/berkpolat",
+        "github": "https://github.com/berkpolatCE",
+        "availability": "Interning at SOCRadar"
     }
 }
