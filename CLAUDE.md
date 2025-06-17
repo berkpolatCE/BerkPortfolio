@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a portfolio website with a Flask backend (Python) and Nuxt.js frontend. The backend provides REST API endpoints with hardcoded portfolio data, while the frontend will consume these APIs to display the portfolio content.
+This is a portfolio website with a Flask backend (Python). The backend provides REST API endpoints with hardcoded portfolio data. The frontend is pending redesign and implementation.
 
 ## Commands
 
@@ -25,6 +25,12 @@ pip install -r requirements.txt
 python run.py
 
 # The API will be available at http://localhost:5000
+```
+
+### Frontend Development
+```bash
+# Frontend is pending redesign and implementation
+# Commands will be added once the new frontend framework is chosen
 ```
 
 ### API Testing
@@ -49,6 +55,16 @@ curl http://localhost:5000/api/v1/skills
 - `utils/`: Helper functions and utilities
   - `responses.py`: Standardized API response functions
 
+### Frontend Structure
+- **Pending redesign**: Frontend framework and architecture to be determined
+- Will consume the Flask backend REST APIs
+- Expected to include:
+  - Homepage with hero section and about information
+  - Projects gallery/grid with detail pages
+  - Skills visualization
+  - Contact information
+  - Responsive design for all devices
+
 ### API Endpoints
 All API endpoints (except health check) are now versioned under `/api/v1`:
 
@@ -71,10 +87,20 @@ All API endpoints (except health check) are now versioned under `/api/v1`:
 5. **API Versioning**: All endpoints versioned under `/api/v1` for future compatibility
 6. **Single Data Source**: All content in one `PORTFOLIO_DATA` dictionary for easy management
 7. **Proper Package Structure**: Backend is a proper Python package with `__init__.py` files
+8. **Frontend Pending**: New frontend architecture to be designed and implemented
 
 ## Development Notes
 
 - The backend runs on port 5000 by default
+- Frontend port configuration pending (typically 3000 or 5173)
 - Debug mode is enabled in development
 - Static files (images, CV) should be placed in `backend/static/` directory when added
 - Update data in `data/portfolio_data.py` to customize portfolio content
+- Frontend will connect to backend API at `http://localhost:5000/api/v1`
+
+## Important File References
+
+- Backend entry: `backend/run.py`
+- Portfolio data: `backend/data/portfolio_data.py`
+- Frontend entry: TBD
+- Frontend configuration: TBD
