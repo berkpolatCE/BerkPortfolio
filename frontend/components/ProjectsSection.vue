@@ -11,37 +11,14 @@
         </p>
       </div>
       
-      <!-- Loading state -->
-      <div v-if="pending" class="flex justify-center items-center min-h-[400px]">
-        <div class="animate-pulse">
-          <div class="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      </div>
-      
-      <!-- Error state -->
-      <div v-else-if="error" class="text-center py-12">
-        <p class="text-red-400 mb-4">Failed to load projects</p>
-        <button 
-          @click="refresh()" 
-          class="px-6 py-2 bg-accent text-primary rounded-lg hover:bg-accent/80 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-      
       <!-- Projects grid -->
-      <div v-else-if="projects.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <ProjectCard 
           v-for="project in projects" 
           :key="project.id"
           :project="project"
           class="project-card"
         />
-      </div>
-      
-      <!-- Empty state -->
-      <div v-else class="text-center py-12">
-        <p class="text-text-secondary">No projects available at the moment.</p>
       </div>
       
       <!-- View all link -->
@@ -58,55 +35,37 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, watch, nextTick } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { onMounted, computed } from 'vue'
 
-// Use our animation composable
-const { animateOnScroll } = useGSAPAnimation()
-
-// Fetch featured projects with better error handling
-const { data: projectsData, pending, error, refresh } = await useAsyncData(
-  'featured-projects', 
-  async () => {
-    try {
-      return await useApi().getProjects(true)
-    } catch (err) {
-      console.error('[ProjectsSection] Failed to fetch projects:', err)
-      // Return empty array as fallback
-      return { projects: [] }
-    }
-  },
-  {
-    lazy: false,
-    server: true,
-    default: () => ({ projects: [] })
-  }
-)
-
+// Fetch featured projects
+const { data: projectsData } = await useAsyncData('featured-projects', () => useApi().getProjects(true))
 const projects = computed(() => projectsData.value?.projects || [])
 
-// Watch for when data is loaded and then animate
-watch(() => pending.value, (isPending) => {
-  if (!isPending && projects.value.length > 0) {
-    // Use nextTick to ensure DOM is updated
-    nextTick(() => {
-      animateOnScroll('.section-title', {
-        y: 30,
-        stagger: 0
-      })
-      animateOnScroll('.project-card')
-    })
-  }
-}, { immediate: true })
-
-// Also animate on mount in case data is already loaded
 onMounted(() => {
-  if (!pending.value && projects.value.length > 0) {
-    animateOnScroll('.section-title', {
-      y: 30,
-      stagger: 0
-    })
-    animateOnScroll('.project-card')
-  }
+  // Animate section title
+  gsap.from('.section-title', {
+    scrollTrigger: {
+      trigger: '.section-title',
+      start: 'top 80%'
+    },
+    y: 30,
+    opacity: 0,
+    duration: 1
+  })
+  
+  // Animate project cards
+  gsap.from('.project-card', {
+    scrollTrigger: {
+      trigger: '.project-card',
+      start: 'top 80%'
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.2
+  })
 })
 </script>
 

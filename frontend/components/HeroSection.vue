@@ -13,7 +13,7 @@
           <div class="relative inline-block">
             <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-accent/30 shadow-2xl relative z-10">
               <img 
-                :src="getProfileImage()" 
+                :src="homeData?.image_url || '/images/profile.jpg'" 
                 :alt="homeData?.name || 'Profile'"
                 class="w-full h-full object-cover"
               />
@@ -109,7 +109,6 @@ const scrollIndicator = ref(null)
 
 // Fetch home data
 const { data: homeData } = await useAsyncData('home', () => useApi().getHome())
-const { getProfileImage } = useImages()
 
 const titleWords = computed(() => {
   const name = homeData.value?.name || 'Loading'
@@ -236,5 +235,4 @@ function createParticles() {
     opacity: 0;
   }
 }
-
 </style>

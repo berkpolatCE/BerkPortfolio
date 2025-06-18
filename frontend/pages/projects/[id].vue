@@ -36,8 +36,8 @@
       <div class="container mx-auto px-6">
         <div class="max-w-4xl mx-auto">
           <!-- Project image -->
-          <div v-if="projectImage" class="mb-12 rounded-xl overflow-hidden">
-            <img :src="projectImage" :alt="project.title" class="w-full h-auto" />
+          <div v-if="project.image" class="mb-12 rounded-xl overflow-hidden">
+            <img :src="project.image" :alt="project.title" class="w-full h-auto" />
           </div>
           
           <!-- Technologies -->
@@ -97,23 +97,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
 const route = useRoute()
 const projectId = route.params.id as string
-const { getProjectImage } = useImages()
 
 // Fetch project details
 const { data: project } = await useAsyncData(
   `project-${projectId}`, 
   () => useApi().getProject(projectId)
 )
-
-// Use local image instead of API image
-const projectImage = computed(() => {
-  if (!project.value) return null
-  return getProjectImage(project.value.id)
-})
 
 if (!project.value) {
   throw createError({
