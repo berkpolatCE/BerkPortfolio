@@ -59,33 +59,34 @@ PORTFOLIO_DATA = {
                 {"name": "C++", "level": "75%"},
                 {"name": "Python", "level": "75%"},
                 {"name": "Java", "level": "50%"},
-                {"name": "Lua", "level": "50%"}
+                {"name": "Lua", "level": "40%"},
+                {"name": "Bash", "level": "50%"}
             ],
             "frontend": [
-                {"name": "Nuxt.js", "level": "80%"},
-                {"name": "Vue.js", "level": "80%"},
-                {"name": "Tailwind CSS", "level": "85%"},
-                {"name": "GSAP", "level": "75%"}
+                {"name": "Nuxt.js", "level": "40%"},
+                {"name": "Vue.js", "level": "50%"},
+                {"name": "Tailwind CSS", "level": "80%"},
+                {"name": "GSAP", "level": "30%"}
             ],
             "backend": [
-                {"name": "Python", "level": "90%"},
-                {"name": "Flask", "level": "85%"}
+                {"name": "Python", "level": "75%"},
+                {"name": "Flask", "level": "50%"}
             ],
             "cybersecurity": [
-                {"name": "Web Application Penetration Testing", "level": "85%"},
-                {"name": "Network Penetration Testing", "level": "80%"},
+                {"name": "Web Application Penetration Testing", "level": "80%"},
+                {"name": "Network Penetration Testing", "level": "60%"},
                 {"name": "Reverse Engineering", "level": "70%"},
-                {"name": "Threat Intelligence", "level": "75%"},
-                {"name": "DFIR (Digital Forensics & Incident Response)", "level": "70%"}
+                {"name": "Threat Intelligence", "level": "60%"},
+                {"name": "DFIR (Digital Forensics & Incident Response)", "level": "50%"}
             ],
             "tools": [
-                {"name": "Git", "level": "85%"},
-                {"name": "Linux", "level": "90%"},
-                {"name": "Windows", "level": "90%"},
-                {"name": "Nmap", "level": "80%"},
+                {"name": "Git", "level": "60%"},
+                {"name": "Linux", "level": "80%"},
+                {"name": "Windows", "level": "80%"},
+                {"name": "Nmap", "level": "90%"},
                 {"name": "Metasploit", "level": "75%"},
-                {"name": "SQLMap", "level": "75%"},
-                {"name": "Burp Suite", "level": "70%"}
+                {"name": "SQLMap", "level": "50%"},
+                {"name": "Burp Suite", "level": "80%"}
             ]
         },
         "soft": [
