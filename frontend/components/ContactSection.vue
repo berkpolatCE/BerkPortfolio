@@ -3,7 +3,7 @@
     <div class="container mx-auto px-6">
       <!-- Section header -->
       <div class="text-center mb-16">
-        <h2 class="section-title">
+        <h2 ref="sectionTitle" class="section-title">
           Let's Connect
         </h2>
         <p class="text-text-secondary text-lg max-w-2xl mx-auto">
@@ -113,9 +113,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+// Template refs
+const sectionTitle = ref(null)
+
+// Store animation instances for cleanup
+let titleAnimation = null
+let itemsAnimation = null
+let socialAnimation = null
 
 // Icons
 const MailIcon = {
@@ -180,40 +188,98 @@ const getSocialIcon = (platform: string) => {
 }
 
 onMounted(() => {
-  // Animate contact items
-  gsap.from('.contact-item', {
-    scrollTrigger: {
-      trigger: '#contact',
-      start: 'top 80%'
-    },
-    x: -30,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.2
-  })
+  // Register ScrollTrigger plugin
+  gsap.registerPlugin(ScrollTrigger)
   
-  // Animate social links
-  gsap.from('.pt-8 a', {
-    scrollTrigger: {
-      trigger: '.pt-8',
-      start: 'top 90%'
-    },
-    scale: 0.9,
-    opacity: 0,
-    duration: 0.6,
-    stagger: 0.15,
-    ease: 'power3.out'
-  })
+  // Animate section title using ref
+  if (sectionTitle.value) {
+    titleAnimation = gsap.from(sectionTitle.value, {
+      scrollTrigger: {
+        trigger: sectionTitle.value,
+        start: 'top 80%',
+        id: 'contact-title'
+      },
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      onComplete: () => {
+        // Ensure final state is applied
+        gsap.set(sectionTitle.value, { clearProps: 'all' })
+      }
+    })
+  }
+  
+  // Animate contact items with scoped selector
+  const contactItems = document.querySelectorAll('#contact .contact-item')
+  if (contactItems.length > 0) {
+    itemsAnimation = gsap.from(contactItems, {
+      scrollTrigger: {
+        trigger: contactItems[0],
+        start: 'top 80%',
+        id: 'contact-items'
+      },
+      x: -30,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      onComplete: () => {
+        // Ensure all items are visible
+        gsap.set(contactItems, { clearProps: 'all' })
+      }
+    })
+  }
+  
+  // Animate social links with scoped selector
+  const socialLinks = document.querySelectorAll('#contact .pt-8 a')
+  if (socialLinks.length > 0) {
+    socialAnimation = gsap.from(socialLinks, {
+      scrollTrigger: {
+        trigger: socialLinks[0].parentElement,
+        start: 'top 90%',
+        id: 'contact-social'
+      },
+      scale: 0.9,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'power3.out',
+      onComplete: () => {
+        // Ensure all links are visible
+        gsap.set(socialLinks, { clearProps: 'all' })
+      }
+    })
+  }
+})
+
+onUnmounted(() => {
+  // Clean up ScrollTrigger instances
+  if (titleAnimation) {
+    titleAnimation.scrollTrigger?.kill()
+    titleAnimation.kill()
+  }
+  if (itemsAnimation) {
+    itemsAnimation.scrollTrigger?.kill()
+    itemsAnimation.kill()
+  }
+  if (socialAnimation) {
+    socialAnimation.scrollTrigger?.kill()
+    socialAnimation.kill()
+  }
 })
 </script>
 
 <style scoped>
 .section-title {
-  @apply font-display text-4xl md:text-5xl font-bold mb-4;
+  @apply font-display text-4xl md:text-5xl font-bold mb-4 text-white;
+  position: relative;
   background: linear-gradient(to right, #ffffff 0%, #a3a3a3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* Fallback for webkit rendering issues */
+  color: transparent;
+  /* Force repaint */
+  will-change: transform;
 }
 
 .social-link {

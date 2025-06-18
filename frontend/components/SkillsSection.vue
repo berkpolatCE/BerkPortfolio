@@ -3,7 +3,7 @@
     <div class="container mx-auto px-6">
       <!-- Section header -->
       <div class="text-center mb-16">
-        <h2 class="section-title">
+        <h2 ref="sectionTitle" class="section-title">
           Skills & Expertise
         </h2>
         <p class="text-text-secondary text-lg max-w-2xl mx-auto">
@@ -50,11 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+// Template refs
+const sectionTitle = ref(null)
+
 const activeTab = ref('technical')
+
+// Store animation instance for cleanup
+let titleAnimation = null
 
 // Fetch skills data
 const { data: skillsData } = await useAsyncData('skills', () => useApi().getSkills())
@@ -85,26 +91,49 @@ const filteredSkills = computed(() => {
 })
 
 onMounted(() => {
-  // Animate section elements
-  gsap.from('.section-title', {
-    scrollTrigger: {
-      trigger: '#skills .section-title',
-      start: 'top 80%'
-    },
-    y: 30,
-    opacity: 0,
-    duration: 1
-  })
+  // Register ScrollTrigger plugin
+  gsap.registerPlugin(ScrollTrigger)
+  
+  // Animate section title using ref
+  if (sectionTitle.value) {
+    titleAnimation = gsap.from(sectionTitle.value, {
+      scrollTrigger: {
+        trigger: sectionTitle.value,
+        start: 'top 80%',
+        id: 'skills-title'
+      },
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      onComplete: () => {
+        // Ensure final state is applied
+        gsap.set(sectionTitle.value, { clearProps: 'all' })
+      }
+    })
+  }
+})
+
+onUnmounted(() => {
+  // Clean up ScrollTrigger instance
+  if (titleAnimation) {
+    titleAnimation.scrollTrigger?.kill()
+    titleAnimation.kill()
+  }
 })
 </script>
 
 <style scoped>
 .section-title {
-  @apply font-display text-4xl md:text-5xl font-bold mb-4;
+  @apply font-display text-4xl md:text-5xl font-bold mb-4 text-white;
+  position: relative;
   background: linear-gradient(to right, #ffffff 0%, #a3a3a3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* Fallback for webkit rendering issues */
+  color: transparent;
+  /* Force repaint */
+  will-change: transform;
 }
 
 .skill-move,
