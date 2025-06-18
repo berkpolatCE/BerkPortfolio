@@ -7,7 +7,7 @@
           Skills & Expertise
         </h2>
         <p class="text-text-secondary text-lg max-w-2xl mx-auto">
-          Technologies and tools I work with
+          Technologies and Tools
         </p>
       </div>
       

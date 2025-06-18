@@ -8,17 +8,69 @@
     
     <div class="container mx-auto px-6 relative z-10">
       <div class="max-w-4xl mx-auto text-center">
+        <!-- Profile Photo -->
+        <div ref="profilePhoto" class="mb-8 opacity-0">
+          <div class="relative inline-block">
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-accent/30 shadow-2xl relative z-10">
+              <img 
+                :src="homeData?.image_url || '/images/profile.jpg'" 
+                :alt="homeData?.name || 'Profile'"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <!-- Decorative ring -->
+            <div class="absolute inset-0 rounded-full border-2 border-accent/20 animate-pulse scale-110"></div>
+            <div class="absolute inset-0 rounded-full border-2 border-accent/10 animate-ping"></div>
+          </div>
+        </div>
+        
         <!-- Name with animation -->
-        <h1 ref="heroTitle" class="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 opacity-0">
+        <h1 ref="heroTitle" class="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-4 opacity-0">
           <span class="inline-block" v-for="(word, i) in titleWords" :key="i">
             {{ word }}&nbsp;
           </span>
         </h1>
         
         <!-- Title/Tagline -->
-        <p ref="heroTagline" class="text-xl md:text-2xl text-text-secondary mb-12 opacity-0">
+        <p ref="heroTagline" class="text-xl md:text-2xl text-text-secondary mb-8 opacity-0">
           {{ homeData?.title || 'Loading...' }}
         </p>
+        
+        <!-- Additional Info Section -->
+        <div ref="heroInfo" class="max-w-3xl mx-auto mb-12 space-y-6 opacity-0">
+          <!-- About -->
+          <p class="text-lg text-text-secondary/90 leading-relaxed">
+            {{ homeData?.about || '' }}
+          </p>
+          
+          <!-- Info Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <!-- Location -->
+            <div class="flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span class="text-text-secondary">{{ homeData?.location || '' }}</span>
+            </div>
+            
+            <!-- Languages -->
+            <div class="flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+              </svg>
+              <span class="text-text-secondary">{{ homeData?.languages?.join(', ') || '' }}</span>
+            </div>
+            
+            <!-- Interests -->
+            <div class="flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+              <span class="text-text-secondary">{{ homeData?.interests?.slice(0, 2).join(', ') || '' }}</span>
+            </div>
+          </div>
+        </div>
         
         <!-- CTA Buttons -->
         <div ref="heroCta" class="flex flex-col sm:flex-row gap-4 justify-center opacity-0">
@@ -30,13 +82,14 @@
           </a>
         </div>
         
-        <!-- Scroll indicator -->
-        <div ref="scrollIndicator" class="absolute bottom-16 left-1/2 transform -translate-x-1/2 opacity-0">
-          <div class="mouse-scroll">
-            <div class="mouse">
-              <div class="wheel"></div>
-            </div>
-          </div>
+      </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div ref="scrollIndicator" class="absolute bottom-20 left-1/2 transform -translate-x-1/2 opacity-0">
+      <div class="mouse-scroll">
+        <div class="mouse">
+          <div class="wheel"></div>
         </div>
       </div>
     </div>
@@ -47,8 +100,10 @@
 import { gsap } from 'gsap'
 import { onMounted, ref, computed } from 'vue'
 
+const profilePhoto = ref(null)
 const heroTitle = ref(null)
 const heroTagline = ref(null)
+const heroInfo = ref(null)
 const heroCta = ref(null)
 const scrollIndicator = ref(null)
 
@@ -64,6 +119,15 @@ onMounted(() => {
   // Create timeline for hero animations
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
   
+  // Animate profile photo
+  tl.set(profilePhoto.value, { scale: 0.8, opacity: 0 })
+    .to(profilePhoto.value, {
+      scale: 1,
+      opacity: 1,
+      duration: 1.2,
+      ease: 'elastic.out(1, 0.8)'
+    })
+  
   // Animate title words
   const titleChars = heroTitle.value?.querySelectorAll('.inline-block')
   tl.set(titleChars, { y: 50, opacity: 0 })
@@ -72,8 +136,13 @@ onMounted(() => {
       opacity: 1,
       duration: 1,
       stagger: 0.1
-    })
+    }, '-=0.8')
     .to(heroTagline.value, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8
+    }, '-=0.5')
+    .to(heroInfo.value, {
       opacity: 1,
       y: 0,
       duration: 0.8

@@ -10,8 +10,8 @@ PORTFOLIO_DATA = {
                  "Demonstrates advanced knowledge of both Linux and Windows operating systems. "
                  "Eager to apply technical expertise and problem-solving skills in cybersecurity and software development roles.",
         "image_url": "/images/profile.jpg",
-        "location": "Kartal, Istanbul, Turkey",
-        "languages": ["Turkish (Native)", "English (C1, 8.0 IELTS)"],
+        "location": "Istanbul, Turkey",
+        "languages": ["Turkish (Native)", "English (C1)"],
         "interests": ["Web Application Security", "Network Enumeration", "Penetration Testing", "Vulnerability Assessment", "Cybersecurity Research"],
     },
     "photo": {
@@ -36,7 +36,7 @@ PORTFOLIO_DATA = {
             "id": 1,
             "title": "BZTyping",
             "description": "BZTyping is a powerful, customizable speech-to-text application that converts your spoken words into typed text in real-time.",
-            "technologies": ["OpenAI Whisper", "PyQT5"],
+            "technologies": ["Python", "OpenAI Whisper", "PyQT5"],
             "github_url": "https://github.com/berkpolatCE/BZTyping",
             "live_url": None,
             "image": "/images/project1.jpg",
@@ -44,23 +44,13 @@ PORTFOLIO_DATA = {
         },
         {
             "id": 2,
-            "title": "Task Management App",
-            "description": "A collaborative task management tool with real-time updates",
-            "technologies": ["Vue.js", "Express", "PostgreSQL", "Socket.io"],
-            "github_url": "https://github.com/yourusername/project2",
+            "title": "MineCheat",
+            "description": "A real-time Minesweeper memory scanner that reads the game memory and displays the mine locations through an overlay.",
+            "technologies": ["C++", "GDI+", "WinAPI"],
+            "github_url": "https://github.com/berkpolatCE/MineCheat",
             "live_url": None,
             "image": "/images/project2.jpg",
             "featured": True
-        },
-        {
-            "id": 3,
-            "title": "Weather Dashboard",
-            "description": "Real-time weather monitoring dashboard with data visualization",
-            "technologies": ["Python", "Flask", "Chart.js", "OpenWeather API"],
-            "github_url": "https://github.com/yourusername/project3",
-            "live_url": "https://project3.example.com",
-            "image": "/images/project3.jpg",
-            "featured": False
         }
     ],
     "skills": {
@@ -107,13 +97,12 @@ PORTFOLIO_DATA = {
         ]
     },
     "cv": {
-        "filename": "YourName_CV.pdf",
-        "url": "/files/cv.pdf",
-        "last_updated": "2024-03-01"
+        "filename": "Berk_CV.pdf",
+        "url": "/files/Berk_CV.pdf",
+        "last_updated": "2025-03-16"
     },
     "contact": {
-        "email": "berkpolat@gmail.com",
-        "linkedin": "https://linkedin.com/in/berkpolat",
+        "linkedin": "https://www.linkedin.com/in/berk-polat-56171a109/",
         "github": "https://github.com/berkpolatCE",
         "availability": "Interning at SOCRadar"
     }
