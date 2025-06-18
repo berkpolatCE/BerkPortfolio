@@ -20,12 +20,12 @@
               <div class="flex items-start gap-4">
                 <div 
                   class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                  :class="item.type === 'availability' ? 'bg-red-500/20' : 'bg-secondary'"
+                  :class="item.type === 'availability' ? 'bg-red-500/30' : 'bg-secondary'"
                 >
                   <component 
+                    v-if="item.type !== 'availability'"
                     :is="item.icon" 
-                    class="w-6 h-6"
-                    :class="item.type === 'availability' ? 'text-red-500' : 'text-accent'"
+                    class="w-6 h-6 text-accent"
                   />
                 </div>
                 <div>
@@ -223,42 +223,67 @@ onMounted(() => {
   // Animate contact items with scoped selector
   const contactItems = document.querySelectorAll('#contact .contact-item')
   if (contactItems.length > 0) {
-    itemsAnimation = gsap.from(contactItems, {
-      scrollTrigger: {
-        trigger: contactItems[0],
-        start: 'top 80%',
-        id: 'contact-items'
+    // Set initial state explicitly to prevent flash
+    gsap.set(contactItems, { opacity: 1, x: 0 })
+    
+    itemsAnimation = gsap.fromTo(contactItems, 
+      {
+        x: -30,
+        opacity: 0
       },
-      x: -30,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      onComplete: () => {
-        // Ensure all items are visible
-        gsap.set(contactItems, { clearProps: 'all' })
+      {
+        scrollTrigger: {
+          trigger: contactItems[0],
+          start: 'top 80%',
+          id: 'contact-items',
+          once: true // Only animate once
+        },
+        x: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: 'power2.out',
+        onComplete: () => {
+          // Ensure all items are visible and remove GSAP inline styles
+          contactItems.forEach(item => {
+            gsap.set(item, { clearProps: 'all' })
+          })
+        }
       }
-    })
+    )
   }
   
   // Animate social links with scoped selector
   const socialLinks = document.querySelectorAll('#contact .pt-8 a')
   if (socialLinks.length > 0) {
-    socialAnimation = gsap.from(socialLinks, {
-      scrollTrigger: {
-        trigger: socialLinks[0].parentElement,
-        start: 'top 90%',
-        id: 'contact-social'
+    // Set initial state
+    gsap.set(socialLinks, { opacity: 1, scale: 1 })
+    
+    socialAnimation = gsap.fromTo(socialLinks,
+      {
+        scale: 0.9,
+        opacity: 0
       },
-      scale: 0.9,
-      opacity: 0,
-      duration: 0.6,
-      stagger: 0.15,
-      ease: 'power3.out',
-      onComplete: () => {
-        // Ensure all links are visible
-        gsap.set(socialLinks, { clearProps: 'all' })
+      {
+        scrollTrigger: {
+          trigger: socialLinks[0].parentElement,
+          start: 'top 90%',
+          id: 'contact-social',
+          once: true
+        },
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power3.out',
+        onComplete: () => {
+          // Ensure all links are visible
+          socialLinks.forEach(link => {
+            gsap.set(link, { clearProps: 'all' })
+          })
+        }
       }
-    })
+    )
   }
 })
 
@@ -298,6 +323,11 @@ onUnmounted(() => {
 }
 
 .pt-8 .flex a {
+  opacity: 1 !important;
+}
+
+/* Ensure contact items are always visible */
+.contact-item {
   opacity: 1 !important;
 }
 </style>
