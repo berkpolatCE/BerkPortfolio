@@ -7,7 +7,7 @@
     @click="navigateToProject"
   >
     <!-- Project image -->
-    <div class="aspect-video overflow-hidden bg-primary/50">
+    <div class="aspect-video overflow-hidden bg-primary/50 border border-border/50 rounded-t-xl">
       <img 
         v-if="project.image" 
         :src="project.image" 
@@ -26,7 +26,8 @@
         <span 
           v-for="tech in project.technologies?.slice(0, 3)" 
           :key="tech"
-          class="text-xs px-3 py-1 bg-primary rounded-full text-text-secondary"
+          :class="getTechTagClass(tech)"
+          class="text-xs px-3 py-1.5 rounded-full font-medium transition-all duration-300 hover:scale-105"
         >
           {{ tech }}
         </span>
@@ -94,12 +95,70 @@ const handleMouseLeave = () => {
 const navigateToProject = () => {
   router.push(`/projects/${props.project.id}`)
 }
+
+const getTechTagClass = (tech: string): string => {
+  const techLower = tech.toLowerCase()
+  
+  // Define tech-specific colors that work with the dark theme
+  const techColors: Record<string, string> = {
+    // Languages
+    'python': 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+    'javascript': 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30',
+    'typescript': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+    'c++': 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
+    'java': 'bg-orange-500/20 text-orange-300 border border-orange-500/30',
+    'c#': 'bg-green-600/20 text-green-300 border border-green-600/30',
+    'go': 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30',
+    'rust': 'bg-orange-600/20 text-orange-300 border border-orange-600/30',
+    'php': 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30',
+    'ruby': 'bg-red-500/20 text-red-300 border border-red-500/30',
+    'swift': 'bg-orange-500/20 text-orange-300 border border-orange-500/30',
+    
+    // Frameworks & Libraries
+    'react': 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30',
+    'vue': 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30',
+    'angular': 'bg-red-600/20 text-red-300 border border-red-600/30',
+    'django': 'bg-green-700/20 text-green-300 border border-green-700/30',
+    'flask': 'bg-gray-600/20 text-gray-300 border border-gray-600/30',
+    'node.js': 'bg-green-600/20 text-green-300 border border-green-600/30',
+    'express': 'bg-gray-500/20 text-gray-300 border border-gray-500/30',
+    'fastapi': 'bg-teal-500/20 text-teal-300 border border-teal-500/30',
+    'next.js': 'bg-gray-800/40 text-gray-200 border border-gray-700/50',
+    'nuxt': 'bg-green-500/20 text-green-300 border border-green-500/30',
+    
+    // Tools & Technologies
+    'docker': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+    'kubernetes': 'bg-blue-700/20 text-blue-300 border border-blue-700/30',
+    'aws': 'bg-orange-600/20 text-orange-300 border border-orange-600/30',
+    'git': 'bg-red-600/20 text-red-300 border border-red-600/30',
+    'postgresql': 'bg-blue-700/20 text-blue-300 border border-blue-700/30',
+    'mongodb': 'bg-green-600/20 text-green-300 border border-green-600/30',
+    'redis': 'bg-red-600/20 text-red-300 border border-red-600/30',
+    'mysql': 'bg-blue-600/20 text-blue-300 border border-blue-600/30',
+    'tensorflow': 'bg-orange-500/20 text-orange-300 border border-orange-500/30',
+    'pytorch': 'bg-red-500/20 text-red-300 border border-red-500/30',
+    
+    // Default fallback
+    'default': 'bg-accent/20 text-accent border border-accent/30'
+  }
+  
+  // Check for exact match or partial match
+  for (const [key, value] of Object.entries(techColors)) {
+    if (techLower === key || techLower.includes(key)) {
+      return value
+    }
+  }
+  
+  // Return default if no match found
+  return techColors.default
+}
 </script>
 
 <style scoped>
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

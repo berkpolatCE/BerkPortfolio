@@ -9,7 +9,7 @@
     <div class="container mx-auto px-6 relative z-10">
       <div class="max-w-4xl mx-auto text-center">
         <!-- Profile Photo -->
-        <div ref="profilePhoto" class="mb-8 opacity-0">
+        <div ref="profilePhoto" class="mb-12 opacity-0">
           <div class="relative inline-block">
             <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-accent/30 shadow-2xl relative z-10">
               <img 
@@ -32,19 +32,19 @@
         </h1>
         
         <!-- Name -->
-        <h2 ref="heroName" class="text-3xl md:text-4xl font-bold text-text-primary mb-4 opacity-0">
+        <h2 ref="heroName" class="text-3xl md:text-4xl font-bold text-white mb-6 opacity-0">
           Berk Polat
         </h2>
         
         <!-- Title/Tagline -->
-        <p ref="heroTagline" class="text-xl md:text-2xl text-text-secondary mb-8 opacity-0">
+        <p ref="heroTagline" class="text-xl md:text-2xl text-gray-300 font-medium mb-12 opacity-0">
           {{ homeData?.title || 'Loading...' }}
         </p>
         
         <!-- Additional Info Section -->
-        <div ref="heroInfo" class="max-w-3xl mx-auto mb-12 space-y-6 opacity-0">
+        <div ref="heroInfo" class="max-w-3xl mx-auto mb-16 space-y-8 opacity-0">
           <!-- About -->
-          <p class="text-lg text-text-secondary/90 leading-relaxed">
+          <p class="text-lg text-gray-200 leading-relaxed font-normal">
             {{ homeData?.about || '' }}
           </p>
           
@@ -56,7 +56,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
-              <span class="text-text-secondary">{{ homeData?.location || '' }}</span>
+              <span class="text-gray-300 font-medium">{{ homeData?.location || '' }}</span>
             </div>
             
             <!-- Languages -->
@@ -64,7 +64,7 @@
               <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
               </svg>
-              <span class="text-text-secondary">{{ homeData?.languages?.join(', ') || '' }}</span>
+              <span class="text-gray-300 font-medium">{{ homeData?.languages?.join(', ') || '' }}</span>
             </div>
             
             <!-- Interests -->
@@ -72,7 +72,7 @@
               <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
               </svg>
-              <span class="text-text-secondary">{{ homeData?.interests?.slice(0, 2).join(', ') || '' }}</span>
+              <span class="text-gray-300 font-medium">{{ homeData?.interests?.slice(0, 2).join(', ') || '' }}</span>
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ function createParticles() {
 }
 
 .btn-secondary {
-  @apply px-8 py-4 border-2 border-text-secondary text-text-secondary font-semibold rounded-lg transition-all duration-300 hover:border-accent hover:text-accent hover:scale-105;
+  @apply px-8 py-4 border-2 border-gray-400 text-gray-200 font-semibold rounded-lg transition-all duration-300 hover:border-accent hover:text-accent hover:scale-105;
 }
 
 .particle {
@@ -228,11 +228,11 @@ function createParticles() {
 }
 
 .mouse {
-  @apply w-6 h-10 border-2 border-text-secondary rounded-full relative;
+  @apply w-6 h-10 border-2 border-gray-400 rounded-full relative;
 }
 
 .wheel {
-  @apply w-1 h-2 bg-text-secondary rounded-full absolute left-1/2 transform -translate-x-1/2 top-2;
+  @apply w-1 h-2 bg-gray-400 rounded-full absolute left-1/2 transform -translate-x-1/2 top-2;
   animation: scroll 2s infinite;
 }
 
