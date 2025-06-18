@@ -192,21 +192,20 @@ const toggleCategory = (categoryId: string) => {
         if (lines.length > 0) {
           gsap.to(lines, {
             opacity: 0,
-            duration: 0.3,
-            ease: 'power2.in',
-            stagger: 0.01
+            duration: 0.2,
+            ease: 'power2.in'
           })
         }
       }
       
-      // Then switch categories with a smoother delay
+      // Then switch categories with a slight delay
       setTimeout(() => {
         expandedCategory.value = categoryId
         setTimeout(() => {
           isAnimating.value = false
           isSwitchingCategories = false
-        }, 800)
-      }, 400)
+        }, 600)
+      }, 150)
     } else {
       // No category open, just expand
       isSwitchingCategories = false
@@ -305,9 +304,9 @@ const drawConnectionLines = async () => {
     // Only animate the stroke, not opacity
     linesTimeline!.to(path, {
       strokeDashoffset: 0,
-      duration: 0.8,
-      ease: 'power3.out'
-    }, index * 0.05)
+      duration: 0.6,
+      ease: 'power2.out'
+    }, index * 0.03)
   })
 }
 
@@ -324,7 +323,7 @@ const onEnter = (el: Element) => {
   gsap.to(el, {
     opacity: 1,
     height: 'auto',
-    duration: 0.6,
+    duration: 0.4,
     ease: 'power3.out',
     onComplete: () => {
       gsap.set(el, { overflow: 'visible' })
@@ -372,37 +371,30 @@ const onLeave = (el: Element) => {
 
 const onSkillEnter = (el: Element) => {
   const index = parseInt(el.getAttribute('data-index') || '0')
-  
-  // Set initial state immediately
-  gsap.set(el, {
-    opacity: 0,
-    y: 40,
-    scale: 0.85,
-    rotateX: -15
-  })
-  
-  // Animate with slower timing and more stagger
-  gsap.to(el, {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    rotateX: 0,
-    duration: 1.0, // Slower animation
-    delay: index * 0.12, // More stagger between cards
-    ease: 'power3.out'
-  })
+  gsap.fromTo(el, 
+    {
+      opacity: 0,
+      y: 15,
+      scale: 0.95
+    },
+    {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.3,
+      delay: index * 0.02,
+      ease: 'power2.out'
+    }
+  )
 }
 
 const onSkillLeave = (el: Element) => {
-  const index = parseInt(el.getAttribute('data-index') || '0')
   gsap.to(el, {
     opacity: 0,
-    y: -15,
-    scale: 0.9,
-    rotateX: 15,
-    duration: 0.4,
-    delay: index * 0.02,
-    ease: 'power2.inOut'
+    y: -10,
+    scale: 0.95,
+    duration: 0.15,
+    ease: 'power2.in'
   })
 }
 
@@ -465,7 +457,7 @@ watch(expandedCategory, async (newVal, oldVal) => {
       if (expandedCategory.value === newVal) { // Ensure we're still on the same category
         drawConnectionLines()
       }
-    }, 300) // Increased delay to match new animation timing
+    }, 100)
   }
 })
 </script>
@@ -537,7 +529,5 @@ watch(expandedCategory, async (newVal, oldVal) => {
 /* Skills container styling */
 .skill-node {
   will-change: transform, opacity;
-  transform-style: preserve-3d;
-  perspective: 1000px;
 }
 </style>
