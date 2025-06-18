@@ -71,19 +71,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick, watch, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import SkillCategoryCard, { CodeIcon, CubeIcon, ShieldIcon, CogIcon } from './SkillCategoryCard.vue'
-
-// Register icons as global components
-const app = getCurrentInstance()?.appContext.app
-if (app) {
-  app.component('CodeIcon', CodeIcon)
-  app.component('CubeIcon', CubeIcon)
-  app.component('ShieldIcon', ShieldIcon)
-  app.component('CogIcon', CogIcon)
-}
+import SkillCategoryCard from './SkillCategoryCard.vue'
 
 // Template refs
 const sectionTitle = ref<HTMLElement | null>(null)
@@ -171,12 +162,46 @@ const getCategoryColor = (categoryId: string) => {
   return colors[categoryId] || '#00ffaa'
 }
 
+// Animation state tracking
+const isAnimating = ref(false)
+const pendingCategory = ref<string | null>(null)
+
 // Toggle category expansion
 const toggleCategory = (categoryId: string) => {
+  // Prevent clicks during animation
+  if (isAnimating.value) return
+  
   if (expandedCategory.value === categoryId) {
+    // Closing current category
+    isAnimating.value = true
     expandedCategory.value = null
+    setTimeout(() => {
+      isAnimating.value = false
+    }, 400)
   } else {
-    expandedCategory.value = categoryId
+    // Opening or switching category
+    isAnimating.value = true
+    
+    if (expandedCategory.value) {
+      // Crossfade: store the pending category
+      pendingCategory.value = categoryId
+      // Start closing current category
+      expandedCategory.value = null
+      // After a brief moment, start opening the new one
+      setTimeout(() => {
+        expandedCategory.value = pendingCategory.value
+        pendingCategory.value = null
+        setTimeout(() => {
+          isAnimating.value = false
+        }, 400)
+      }, 200) // Small overlap for crossfade effect
+    } else {
+      // No category open, just expand
+      expandedCategory.value = categoryId
+      setTimeout(() => {
+        isAnimating.value = false
+      }, 400)
+    }
   }
 }
 
@@ -186,21 +211,32 @@ const drawConnectionLines = async () => {
   
   if (!linesGroup.value || !skillsGrid.value || !expandedCategory.value) return
   
+  // Kill any existing timeline
+  if (linesTimeline) {
+    linesTimeline.kill()
+    linesTimeline = null
+  }
+  
   // Clear existing lines
-  while (linesGroup.value.firstChild) {
+  while (linesGroup.value?.firstChild) {
     linesGroup.value.removeChild(linesGroup.value.firstChild)
   }
   
+  // Small delay to ensure skills are positioned
+  await new Promise(resolve => setTimeout(resolve, 50))
+  
   const categoryCard = document.querySelector(`.skill-category-card.is-expanded`)
-  if (!categoryCard) return
+  if (!categoryCard || !linesGroup.value) return
   
   const categoryRect = categoryCard.getBoundingClientRect()
   const containerRect = skillsGrid.value.getBoundingClientRect()
   
   const skills = skillsGrid.value.querySelectorAll('.skill-node')
+  if (skills.length === 0) return
+  
   const paths: SVGPathElement[] = []
   
-  skills.forEach((skill) => {
+  skills.forEach((skill, idx) => {
     const skillRect = skill.getBoundingClientRect()
     
     // Calculate positions relative to the SVG container
@@ -209,10 +245,12 @@ const drawConnectionLines = async () => {
     const endX = skillRect.left + skillRect.width / 2 - containerRect.left
     const endY = skillRect.top - containerRect.top + 20
     
-    // Create curved path
-    const midY = startY + (endY - startY) * 0.5
+    // Create more organic curved paths
+    const midY = startY + (endY - startY) * 0.6
+    const controlX = startX + (endX - startX) * 0.3
+    
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path') as SVGPathElement
-    path.setAttribute('d', `M ${startX} ${startY} Q ${startX} ${midY} ${endX} ${endY}`)
+    path.setAttribute('d', `M ${startX} ${startY} Q ${controlX} ${midY} ${endX} ${endY}`)
     path.setAttribute('stroke', 'url(#lineGradient)')
     path.setAttribute('stroke-width', '2')
     path.setAttribute('fill', 'none')
@@ -222,8 +260,7 @@ const drawConnectionLines = async () => {
     paths.push(path)
   })
   
-  // Animate lines
-  if (linesTimeline) linesTimeline.kill()
+  // Animate lines with stagger
   linesTimeline = gsap.timeline()
   
   paths.forEach((path, index) => {
@@ -233,33 +270,64 @@ const drawConnectionLines = async () => {
     
     linesTimeline!.to(path, {
       strokeDashoffset: 0,
-      opacity: 1,
-      duration: 0.6,
-      ease: 'power2.inOut'
-    }, index * 0.05)
+      opacity: 0.4,
+      duration: 0.5,
+      ease: 'power2.out'
+    }, index * 0.02)
   })
 }
 
 // Animation handlers
 const onEnter = (el: Element) => {
-  gsap.set(el, { opacity: 0, height: 0 })
+  gsap.set(el, { 
+    opacity: 0, 
+    height: 0,
+    overflow: 'hidden'
+  })
   gsap.to(el, {
     opacity: 1,
     height: 'auto',
-    duration: 0.5,
-    ease: 'power2.out',
+    duration: 0.4,
+    ease: 'power3.out',
     onComplete: () => {
-      drawConnectionLines()
+      gsap.set(el, { overflow: 'visible' })
+      // Delay line drawing slightly for better visual flow
+      setTimeout(() => drawConnectionLines(), 100)
     }
   })
 }
 
 const onLeave = (el: Element) => {
+  // Fade out lines smoothly first
+  if (linesGroup.value) {
+    const lines = linesGroup.value.querySelectorAll('path')
+    if (lines.length > 0) {
+      gsap.to(lines, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        stagger: 0.01,
+        onComplete: () => {
+          // Kill timeline after fade
+          if (linesTimeline) {
+            linesTimeline.kill()
+            linesTimeline = null
+          }
+          // Clear lines
+          while (linesGroup.value?.firstChild) {
+            linesGroup.value.removeChild(linesGroup.value.firstChild)
+          }
+        }
+      })
+    }
+  }
+  
+  gsap.set(el, { overflow: 'hidden' })
   gsap.to(el, {
     opacity: 0,
     height: 0,
     duration: 0.3,
-    ease: 'power2.in'
+    ease: 'power3.in'
   })
 }
 
@@ -268,16 +336,16 @@ const onSkillEnter = (el: Element) => {
   gsap.fromTo(el, 
     {
       opacity: 0,
-      scale: 0.8,
-      y: -20
+      y: 15,
+      scale: 0.95
     },
     {
       opacity: 1,
-      scale: 1,
       y: 0,
-      duration: 0.5,
-      delay: index * 0.05,
-      ease: 'back.out(1.7)'
+      scale: 1,
+      duration: 0.3,
+      delay: index * 0.02,
+      ease: 'power2.out'
     }
   )
 }
@@ -285,8 +353,9 @@ const onSkillEnter = (el: Element) => {
 const onSkillLeave = (el: Element) => {
   gsap.to(el, {
     opacity: 0,
-    scale: 0.8,
-    duration: 0.3,
+    y: -10,
+    scale: 0.95,
+    duration: 0.15,
     ease: 'power2.in'
   })
 }
@@ -345,7 +414,7 @@ onUnmounted(() => {
 watch(expandedCategory, (newVal) => {
   if (newVal) {
     nextTick(() => {
-      setTimeout(drawConnectionLines, 600)
+      setTimeout(drawConnectionLines, 300)
     })
   }
 })
@@ -392,32 +461,31 @@ watch(expandedCategory, (newVal) => {
 }
 
 /* Transitions */
-.skills-tree-enter-active,
-.skills-tree-leave-active {
-  transition: opacity 0.3s ease;
+.skills-tree-enter-active {
+  transition: opacity 0.4s ease-out;
 }
 
-.skills-tree-enter-from,
+.skills-tree-leave-active {
+  transition: opacity 0.2s ease-in;
+}
+
+.skills-tree-enter-from {
+  opacity: 0;
+}
+
 .skills-tree-leave-to {
   opacity: 0;
 }
 
+/* Disable Vue's default transitions for skill items since we're using GSAP */
 .skill-item-enter-active,
-.skill-item-leave-active {
-  transition: all 0.3s ease;
-}
-
-.skill-item-enter-from {
-  opacity: 0;
-  transform: translateY(-20px) scale(0.8);
-}
-
-.skill-item-leave-to {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
+.skill-item-leave-active,
 .skill-item-move {
-  transition: transform 0.3s ease;
+  transition: none !important;
+}
+
+/* Skills container styling */
+.skill-node {
+  will-change: transform, opacity;
 }
 </style>
