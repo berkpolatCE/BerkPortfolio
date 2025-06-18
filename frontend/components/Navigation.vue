@@ -52,29 +52,8 @@
       @mouseleave="handleMouseLeave"
     >
       <div class="flex flex-col h-full pt-20 pb-8 px-6">
-        <!-- Close Button -->
-        <button
-          @click="closeSidebar"
-          class="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/10 transition-colors"
-          aria-label="Close menu"
-        >
-          <svg
-            class="w-6 h-6 text-foreground"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
         <!-- Navigation Items -->
-        <ul class="space-y-4 mt-8" ref="navList">
+        <ul class="space-y-4" ref="navList">
           <li
             v-for="(item, index) in navItems"
             :key="item.label"
@@ -125,8 +104,10 @@
 
     <!-- Invisible trigger area for auto-show -->
     <div
-      class="fixed top-0 right-0 w-10 h-full z-30"
+      v-if="!isMobile && !isSidebarOpen"
+      class="fixed top-0 right-0 w-32 h-full z-30"
       @mouseenter="showSidebar"
+      style="background: transparent;"
     ></div>
 
     <!-- Mobile Menu Overlay -->
@@ -182,7 +163,7 @@ const startAutoHideTimer = () => {
     if (!isMobile.value) {
       closeSidebar()
     }
-  }, 3000)
+  }, 500) // 500 milisecond timer
 }
 
 const handleMouseEnter = () => {
@@ -192,7 +173,14 @@ const handleMouseEnter = () => {
 }
 
 const handleMouseLeave = () => {
-  if (!isMobile.value) {
+  if (!isMobile.value && isSidebarOpen.value) {
+    startAutoHideTimer()
+  }
+}
+
+const handleTriggerLeave = () => {
+  // Don't start timer if mouse is still over the sidebar
+  if (!isMobile.value && !isSidebarOpen.value) {
     startAutoHideTimer()
   }
 }
@@ -203,12 +191,15 @@ const toggleSidebar = () => {
 }
 
 const showSidebar = () => {
-  if (!isSidebarOpen.value) {
-    isSidebarOpen.value = true
+  // Clear any existing timer first
+  if (autoHideTimer.value) {
+    clearTimeout(autoHideTimer.value)
   }
-  if (!isMobile.value) {
-    startAutoHideTimer()
-  }
+  
+  // Open sidebar
+  isSidebarOpen.value = true
+  
+  // Don't start timer immediately - wait for mouse to leave
 }
 
 const closeSidebar = () => {

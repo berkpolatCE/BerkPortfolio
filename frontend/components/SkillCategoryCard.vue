@@ -74,7 +74,7 @@
     <div v-if="isExpanded" class="absolute inset-0 rounded-xl bg-accent/10 blur-xl -z-10 animate-pulse"></div>
   </div>
 </template>
-
+  
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { gsap } from 'gsap'
