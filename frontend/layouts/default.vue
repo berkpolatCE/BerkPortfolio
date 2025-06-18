@@ -15,7 +15,7 @@
     </svg>
     
     <Navigation />
-    <main class="pt-16">
+    <main>
       <slot />
     </main>
   </div>

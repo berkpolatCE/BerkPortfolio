@@ -35,8 +35,8 @@
             <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;">
               <defs>
                 <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" :stop-color="getCategoryColor(expandedCategory)" stop-opacity="0.3" />
-                  <stop offset="100%" :stop-color="getCategoryColor(expandedCategory)" stop-opacity="0.1" />
+                  <stop offset="0%" :stop-color="getCategoryColor(expandedCategory)" stop-opacity="0.8" />
+                  <stop offset="100%" :stop-color="getCategoryColor(expandedCategory)" stop-opacity="0.4" />
                 </linearGradient>
               </defs>
               <g ref="linesGroup"></g>
@@ -252,7 +252,7 @@ const drawConnectionLines = async () => {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path') as SVGPathElement
     path.setAttribute('d', `M ${startX} ${startY} Q ${controlX} ${midY} ${endX} ${endY}`)
     path.setAttribute('stroke', 'url(#lineGradient)')
-    path.setAttribute('stroke-width', '2')
+    path.setAttribute('stroke-width', '3')
     path.setAttribute('fill', 'none')
     path.setAttribute('opacity', '0')
     
@@ -270,7 +270,7 @@ const drawConnectionLines = async () => {
     
     linesTimeline!.to(path, {
       strokeDashoffset: 0,
-      opacity: 0.4,
+      opacity: 0.9,
       duration: 0.5,
       ease: 'power2.out'
     }, index * 0.02)

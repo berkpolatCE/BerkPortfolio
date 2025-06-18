@@ -89,15 +89,6 @@
         
       </div>
     </div>
-    
-    <!-- Scroll indicator -->
-    <div ref="scrollIndicator" class="absolute bottom-20 left-1/2 transform -translate-x-1/2 opacity-0">
-      <div class="mouse-scroll">
-        <div class="mouse">
-          <div class="wheel"></div>
-        </div>
-      </div>
-    </div>
   </section>
 </template>
 
