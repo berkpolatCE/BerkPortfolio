@@ -9,8 +9,8 @@
     <!-- Project image -->
     <div class="aspect-video overflow-hidden bg-primary/50">
       <img 
-        v-if="project.image" 
-        :src="project.image" 
+        v-if="projectImage" 
+        :src="projectImage" 
         :alt="project.title"
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
       />
@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { gsap } from 'gsap'
 
@@ -70,6 +70,10 @@ const props = defineProps<{
 
 const router = useRouter()
 const cardRef = ref(null)
+const { getProjectImage } = useImages()
+
+// Use local image instead of API image
+const projectImage = computed(() => getProjectImage(props.project.id))
 
 const handleMouseEnter = (e: MouseEvent) => {
   if (!cardRef.value) return
