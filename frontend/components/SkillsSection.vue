@@ -177,39 +177,58 @@ const toggleCategory = (categoryId: string) => {
     expandedCategory.value = null
     setTimeout(() => {
       isAnimating.value = false
-    }, 400)
+    }, 600)
   } else {
     // Opening or switching category
     isAnimating.value = true
     
     if (expandedCategory.value) {
-      // Crossfade: store the pending category
-      pendingCategory.value = categoryId
-      // Start closing current category
-      expandedCategory.value = null
-      // After a brief moment, start opening the new one
+      // Smooth transition between categories
+      isSwitchingCategories = true
+      
+      // First, fade out the lines
+      if (linesGroup.value) {
+        const lines = linesGroup.value.querySelectorAll('path')
+        if (lines.length > 0) {
+          gsap.to(lines, {
+            opacity: 0,
+            duration: 0.2,
+            ease: 'power2.in'
+          })
+        }
+      }
+      
+      // Then switch categories with a slight delay
       setTimeout(() => {
-        expandedCategory.value = pendingCategory.value
-        pendingCategory.value = null
+        expandedCategory.value = categoryId
         setTimeout(() => {
           isAnimating.value = false
-        }, 400)
-      }, 200) // Small overlap for crossfade effect
+          isSwitchingCategories = false
+        }, 600)
+      }, 150)
     } else {
       // No category open, just expand
+      isSwitchingCategories = false
       expandedCategory.value = categoryId
       setTimeout(() => {
         isAnimating.value = false
-      }, 400)
+      }, 600)
     }
   }
 }
 
+// Track if lines are currently being drawn
+let isDrawingLines = false
+
 // Draw connection lines
 const drawConnectionLines = async () => {
+  if (isDrawingLines) return // Prevent multiple simultaneous draws
+  
   await nextTick()
   
   if (!linesGroup.value || !skillsGrid.value || !expandedCategory.value) return
+  
+  isDrawingLines = true
   
   // Kill any existing timeline
   if (linesTimeline) {
@@ -217,9 +236,19 @@ const drawConnectionLines = async () => {
     linesTimeline = null
   }
   
-  // Clear existing lines
-  while (linesGroup.value?.firstChild) {
-    linesGroup.value.removeChild(linesGroup.value.firstChild)
+  // Clear existing lines with fade out if they exist
+  const existingLines = linesGroup.value.querySelectorAll('path')
+  if (existingLines.length > 0) {
+    await gsap.to(existingLines, {
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power2.in',
+      onComplete: () => {
+        while (linesGroup.value?.firstChild) {
+          linesGroup.value.removeChild(linesGroup.value.firstChild)
+        }
+      }
+    })
   }
   
   // Small delay to ensure skills are positioned
@@ -254,28 +283,35 @@ const drawConnectionLines = async () => {
     path.setAttribute('stroke', 'url(#lineGradient)')
     path.setAttribute('stroke-width', '3')
     path.setAttribute('fill', 'none')
-    path.setAttribute('opacity', '0')
+    path.setAttribute('opacity', '0.9') // Start with final opacity
     
     linesGroup.value!.appendChild(path)
     paths.push(path)
   })
   
   // Animate lines with stagger
-  linesTimeline = gsap.timeline()
+  linesTimeline = gsap.timeline({
+    onComplete: () => {
+      isDrawingLines = false
+    }
+  })
   
   paths.forEach((path, index) => {
     const length = path.getTotalLength()
     path.style.strokeDasharray = length.toString()
     path.style.strokeDashoffset = length.toString()
     
+    // Only animate the stroke, not opacity
     linesTimeline!.to(path, {
       strokeDashoffset: 0,
-      opacity: 0.9,
-      duration: 0.5,
+      duration: 0.6,
       ease: 'power2.out'
-    }, index * 0.02)
+    }, index * 0.03)
   })
 }
+
+// Track if we're switching between categories
+let isSwitchingCategories = false
 
 // Animation handlers
 const onEnter = (el: Element) => {
@@ -291,8 +327,10 @@ const onEnter = (el: Element) => {
     ease: 'power3.out',
     onComplete: () => {
       gsap.set(el, { overflow: 'visible' })
-      // Delay line drawing slightly for better visual flow
-      setTimeout(() => drawConnectionLines(), 100)
+      // Only draw lines on initial open, not when switching
+      if (!isSwitchingCategories) {
+        drawConnectionLines()
+      }
     }
   })
 }
@@ -410,12 +448,16 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-// Redraw lines when category changes
-watch(expandedCategory, (newVal) => {
-  if (newVal) {
-    nextTick(() => {
-      setTimeout(drawConnectionLines, 300)
-    })
+// Watch for category changes but only draw lines if container is already visible
+watch(expandedCategory, async (newVal, oldVal) => {
+  if (newVal && oldVal) {
+    // Switching between categories - wait for skills to be positioned
+    await nextTick()
+    setTimeout(() => {
+      if (expandedCategory.value === newVal) { // Ensure we're still on the same category
+        drawConnectionLines()
+      }
+    }, 100)
   }
 })
 </script>

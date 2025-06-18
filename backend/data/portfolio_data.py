@@ -56,10 +56,10 @@ PORTFOLIO_DATA = {
     "skills": {
         "technical": {
             "languages": [
-                {"name": "C++", "level": "90%"},
-                {"name": "Python", "level": "90%"},
-                {"name": "Java", "level": "70%"},
-                {"name": "Lua", "level": "70%"}
+                {"name": "C++", "level": "75%"},
+                {"name": "Python", "level": "75%"},
+                {"name": "Java", "level": "50%"},
+                {"name": "Lua", "level": "50%"}
             ],
             "frontend": [
                 {"name": "Nuxt.js", "level": "80%"},
