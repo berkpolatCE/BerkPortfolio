@@ -77,4 +77,8 @@ onMounted(() => {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.project-card {
+  opacity: 1 !important;
+}
 </style>

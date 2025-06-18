@@ -31,6 +31,11 @@
           </span>
         </h1>
         
+        <!-- Name -->
+        <h2 ref="heroName" class="text-3xl md:text-4xl font-bold text-text-primary mb-4 opacity-0">
+          Berk Polat
+        </h2>
+        
         <!-- Title/Tagline -->
         <p ref="heroTagline" class="text-xl md:text-2xl text-text-secondary mb-8 opacity-0">
           {{ homeData?.title || 'Loading...' }}
@@ -102,6 +107,7 @@ import { onMounted, ref, computed } from 'vue'
 
 const profilePhoto = ref(null)
 const heroTitle = ref(null)
+const heroName = ref(null)
 const heroTagline = ref(null)
 const heroInfo = ref(null)
 const heroCta = ref(null)
@@ -137,6 +143,11 @@ onMounted(() => {
       duration: 1,
       stagger: 0.1
     }, '-=0.8')
+    .to(heroName.value, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8
+    }, '-=0.5')
     .to(heroTagline.value, {
       opacity: 1,
       y: 0,
