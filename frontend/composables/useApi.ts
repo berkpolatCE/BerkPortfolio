@@ -1,6 +1,6 @@
 export const useApi = () => {
-  const config = useRuntimeConfig()
-  const baseURL = config.public.apiBase
+  // Use relative path so requests go through the Nuxt server proxy
+  const baseURL = '/api/v1'
 
   const fetchData = async <T>(endpoint: string): Promise<T> => {
     try {
@@ -12,6 +12,7 @@ export const useApi = () => {
       return response.data as T
     } catch (error) {
       console.error(`API Error: ${endpoint}`, error)
+      console.error(`Failed URL: ${baseURL}${endpoint}`)
       throw error
     }
   }

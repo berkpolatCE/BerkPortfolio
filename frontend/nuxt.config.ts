@@ -8,6 +8,15 @@ export default defineNuxtConfig({
     preset: 'node-server'
   },
   
+  // Proxy configuration for both dev and production
+  routeRules: {
+    '/api/**': {
+      proxy: {
+        to: 'http://localhost:5000/api/**'
+      }
+    }
+  },
+  
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
