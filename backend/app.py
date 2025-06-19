@@ -1,14 +1,22 @@
 import os
+import logging
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 
 # Import routes using relative imports
-from .routes import home, photo, projects, skills, cv, contact
+from .routes import home, photo, projects, skills, contact
 from .utils.responses import success_response, error_response
+from .utils.error_handling import log_error
 
 # Load environment variables
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO if os.getenv('FLASK_ENV') == 'production' else logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 # Create Flask app
 app = Flask(__name__)
@@ -25,7 +33,6 @@ app.register_blueprint(home.bp, url_prefix=API_PREFIX)
 app.register_blueprint(photo.bp, url_prefix=API_PREFIX)
 app.register_blueprint(projects.bp, url_prefix=API_PREFIX)
 app.register_blueprint(skills.bp, url_prefix=API_PREFIX)
-app.register_blueprint(cv.bp, url_prefix=API_PREFIX)
 app.register_blueprint(contact.bp, url_prefix=API_PREFIX)
 
 # Health check endpoint (keeping at /api/health for backward compatibility)
@@ -54,10 +61,11 @@ def internal_error(error):
 
 @app.errorhandler(Exception)
 def handle_exception(error):
-    # Log the error in production
-    app.logger.error(f'Unhandled exception: {str(error)}')
+    # Log the error with full details
+    log_error(error, context='Unhandled exception')
     return error_response(
         error='An unexpected error occurred',
+        message='Please try again later or contact support if the issue persists',
         status_code=500
     )
 

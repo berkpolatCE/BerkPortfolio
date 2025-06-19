@@ -24,7 +24,6 @@ export const useApi = () => {
     getSkills: () => fetchData('/skills'),
     getSkillsByCategory: (category: string) => fetchData(`/skills/${category}`),
     getContact: () => fetchData('/contact'),
-    getCv: () => fetchData('/cv'),
     getPhoto: () => fetchData('/photo')
   }
 }

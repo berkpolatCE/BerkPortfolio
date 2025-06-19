@@ -1,6 +1,7 @@
 from flask import Blueprint
 from ..data.portfolio_data import PORTFOLIO_DATA
 from ..utils.responses import success_response, error_response
+from ..utils.error_handling import log_error, get_safe_error_message
 
 bp = Blueprint('skills', __name__)
 
@@ -15,8 +16,10 @@ def get_skills():
             status_code=404
         )
     except Exception as e:
+        log_error(e, context='Error retrieving skills data')
         return error_response(
-            error=str(e),
+            error=get_safe_error_message(e),
+            message='Unable to load skills information',
             status_code=500
         )
 
@@ -39,7 +42,9 @@ def get_skills_by_category(category):
             status_code=404
         )
     except Exception as e:
+        log_error(e, context='Error retrieving skills by category')
         return error_response(
-            error=str(e),
+            error=get_safe_error_message(e),
+            message='Unable to load skills for the requested category',
             status_code=500
         )

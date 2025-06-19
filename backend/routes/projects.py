@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from ..data.portfolio_data import PORTFOLIO_DATA
 from ..utils.responses import success_response, error_response, not_found_response
+from ..utils.error_handling import log_error, get_safe_error_message
 
 bp = Blueprint('projects', __name__)
 
@@ -26,8 +27,10 @@ def get_projects():
             status_code=404
         )
     except Exception as e:
+        log_error(e, context='Error retrieving projects list')
         return error_response(
-            error=str(e),
+            error=get_safe_error_message(e),
+            message='Unable to load projects',
             status_code=500
         )
 
@@ -47,7 +50,9 @@ def get_project(project_id):
             status_code=404
         )
     except Exception as e:
+        log_error(e, context='Error retrieving specific project')
         return error_response(
-            error=str(e),
+            error=get_safe_error_message(e),
+            message='Unable to load project details',
             status_code=500
         )
