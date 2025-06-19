@@ -47,5 +47,5 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "✅ Build completed successfully!"
-echo "📁 Frontend built to: frontend/dist/"
+echo "📁 Frontend built to: frontend/.output/public/"
 echo "🚀 Ready for deployment with ./start.sh"

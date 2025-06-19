@@ -16,20 +16,22 @@ BACKEND_PID=$!
 # Wait a moment for backend to start
 sleep 5
 
-# Start frontend build serving (for production)
-echo "🌐 Starting frontend server..."
-cd ../frontend
+# Go back to root directory
+cd ..
 
-# Check if dist directory exists (should be built already)
-if [ ! -d "dist" ]; then
-    echo "❌ Frontend dist directory not found. Make sure to run build script first."
+# Start frontend server (Nuxt 3 with Nitro)
+echo "🌐 Starting frontend server..."
+cd frontend
+
+# Check if .output directory exists (Nuxt 3 build output)
+if [ ! -d ".output" ]; then
+    echo "❌ Frontend .output directory not found. Make sure to run build script first."
     kill $BACKEND_PID
     exit 1
 fi
 
-# Serve the built frontend using a simple HTTP server
-# We'll use a Node.js static server that can handle SPA routing
-npx serve dist -s -l 3000 &
+# Start the Nuxt Nitro server
+PORT=3000 node .output/server/index.mjs &
 FRONTEND_PID=$!
 
 echo "✅ Application started!"
