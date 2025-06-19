@@ -10,22 +10,33 @@ PORT=${PORT:-5000}
 
 # Start backend with Gunicorn in the background
 echo "📡 Starting backend API on port $PORT..."
-cd backend && gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 30 wsgi:app &
+gunicorn --chdir backend --bind 0.0.0.0:$PORT --workers 2 --timeout 30 wsgi:app &
 BACKEND_PID=$!
 
 # Wait a moment for backend to start
 sleep 5
 
-# Go back to root directory
-cd ..
-
 # Start frontend server (Nuxt 3 with Nitro)
 echo "🌐 Starting frontend server..."
+
+# Debug: Show current directory and contents
+echo "Current directory: $(pwd)"
+echo "Directory contents: $(ls -la)"
+
+# Check if frontend directory exists
+if [ ! -d "frontend" ]; then
+    echo "❌ Frontend directory not found. Current location: $(pwd)"
+    echo "Available directories: $(ls -d */)"
+    kill $BACKEND_PID
+    exit 1
+fi
+
 cd frontend
 
 # Check if .output directory exists (Nuxt 3 build output)
 if [ ! -d ".output" ]; then
     echo "❌ Frontend .output directory not found. Make sure to run build script first."
+    echo "Frontend directory contents: $(ls -la)"
     kill $BACKEND_PID
     exit 1
 fi
