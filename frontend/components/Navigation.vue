@@ -3,10 +3,8 @@
     <!-- Fixed Logo at Top Left -->
     <div class="fixed top-4 left-4 z-50">
       <a 
-        href="https://socradar.io" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        class="block"
+        href="/#" 
+        class="block cursor-pointer"
       >
         <img
           ref="logoImg"
