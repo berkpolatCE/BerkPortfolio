@@ -163,7 +163,7 @@ const startAutoHideTimer = () => {
     if (!isMobile.value) {
       closeSidebar()
     }
-  }, 500) // 500 milisecond timer
+  }, 1000) // 500 milisecond timer
 }
 
 const handleMouseEnter = () => {
