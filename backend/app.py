@@ -9,8 +9,11 @@ from .routes import home, photo, projects, skills, contact
 from .utils.responses import success_response, error_response
 from .utils.error_handling import log_error
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from backend/.env
+# Handle both cases: running from backend/ or project root
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+dotenv_path = os.path.join(backend_dir, '.env')
+load_dotenv(dotenv_path)
 
 # Configure logging
 logging.basicConfig(
@@ -21,8 +24,22 @@ logging.basicConfig(
 # Create Flask app
 app = Flask(__name__)
 
+# Configure Flask app
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+
 # Configure CORS with environment variables
-cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
+# Default to localhost for development, restrict in production
+default_origins = 'http://localhost:3000,http://127.0.0.1:3000'
+if os.getenv('FLASK_ENV') == 'production':
+    # In production, CORS_ORIGINS must be explicitly set - no wildcard
+    cors_origins_str = os.getenv('CORS_ORIGINS')
+    if not cors_origins_str:
+        raise ValueError("CORS_ORIGINS must be set in production environment")
+    cors_origins = [origin.strip() for origin in cors_origins_str.split(',')]
+else:
+    # Development: allow localhost origins
+    cors_origins = [origin.strip() for origin in os.getenv('CORS_ORIGINS', default_origins).split(',')]
+
 CORS(app, origins=cors_origins)
 
 # API version prefix

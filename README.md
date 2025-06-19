@@ -1,6 +1,6 @@
 # Portfolio Website
 
-A modern, responsive portfolio website built with Nuxt 3 frontend and Flask backend, featuring smooth animations and a clean, minimalist design.
+A modern, responsive portfolio website built with Nuxt 3 frontend and Flask backend, featuring smooth animations, secure error handling, and production-ready deployment configuration.
 
 ## 🚀 Features
 
@@ -12,6 +12,8 @@ A modern, responsive portfolio website built with Nuxt 3 frontend and Flask back
 - **Particle Background**: Dynamic animated background
 - **RESTful API**: Clean API endpoints for portfolio data
 - **Production Ready**: Configured for deployment with Gunicorn
+- **Security Focused**: Secure error handling, CORS protection, environment-based configuration
+- **Professional Logging**: Comprehensive error logging without exposing sensitive information
 
 ## 🛠️ Tech Stack
 
@@ -86,13 +88,26 @@ BerkPortfolio/
    FLASK_ENV=development
    FLASK_DEBUG=False
    SECRET_KEY=your-secret-key-here
-   CORS_ORIGINS=http://localhost:3000
+   CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
    ```
 
 2. **Frontend Environment** (create `frontend/.env`):
    ```env
    NUXT_PUBLIC_API_BASE=http://localhost:5000/api/v1
    ```
+
+### 🔒 Security Configuration
+
+#### CORS Origins (Critical Security Setting)
+- **Development**: Defaults to localhost origins
+- **Production**: MUST be explicitly set with your actual domain(s)
+- **No wildcards** allowed in production
+
+#### Secret Key Generation
+Generate a secure secret key for production:
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
 
 ### Development
 
@@ -114,34 +129,60 @@ Visit `http://localhost:3000` to view the application.
 
 ### Using Gunicorn (Recommended)
 
-1. **Install Gunicorn**
-   ```bash
-   pip install gunicorn
-   ```
-
-2. **Create WSGI entry point** (`backend/wsgi.py`):
-   ```python
-   from app import app
-   
-   if __name__ == "__main__":
-       app.run()
-   ```
-
-3. **Start with Gunicorn**
+1. **Install Dependencies**
    ```bash
    cd backend
-   gunicorn --config gunicorn.conf.py wsgi:app
+   pip install -r requirements.txt
    ```
 
-### Environment Variables for Production
+2. **Run with Gunicorn** (from project root):
+   ```bash
+   cd /path/to/BerkPortfolio
+   gunicorn --config backend/gunicorn.conf.py backend.wsgi:app
+   ```
+
+3. **Alternative Commands**:
+   ```bash
+   # Simple command
+   gunicorn --bind 0.0.0.0:5000 --workers 2 backend.wsgi:app
+   
+   # Production mode
+   FLASK_ENV=production gunicorn --config backend/gunicorn.conf.py backend.wsgi:app
+   ```
+
+### 🔒 Production Environment Variables (Required)
 
 Set these environment variables in your production environment:
 
-- `FLASK_ENV=production`
-- `FLASK_DEBUG=False`
-- `SECRET_KEY=<secure-random-key>`
-- `CORS_ORIGINS=https://your-domain.com`
-- `NUXT_PUBLIC_API_BASE=https://your-api-domain.com/api/v1`
+```env
+FLASK_ENV=production
+FLASK_DEBUG=False
+FLASK_HOST=0.0.0.0
+FLASK_PORT=10000
+SECRET_KEY=<secure-64-character-hex-key>
+CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+```
+
+Frontend:
+```env
+NUXT_PUBLIC_API_BASE=https://your-api-domain.com/api/v1
+```
+
+### 🛡️ Security Checklist for Production
+
+- ✅ **CORS_ORIGINS**: Set to your actual domain(s) only
+- ✅ **SECRET_KEY**: Generate a secure random key
+- ✅ **FLASK_ENV**: Set to `production`
+- ✅ **FLASK_DEBUG**: Set to `False`
+- ✅ **HTTPS**: Use HTTPS for all production domains
+- ✅ **Error Logging**: Errors are logged server-side, not exposed to clients
+
+### 🚨 Production Security Notes
+
+1. **CORS Origins**: The application will **refuse to start** in production mode without explicit CORS_ORIGINS
+2. **No Wildcards**: CORS origins cannot use `*` in production
+3. **HTTPS Only**: All production origins should use HTTPS
+4. **Secret Key**: Generate with `python -c "import secrets; print(secrets.token_hex(32))"`
 
 ## 📡 API Endpoints
 
