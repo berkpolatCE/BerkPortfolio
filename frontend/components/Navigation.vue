@@ -2,8 +2,8 @@
   <div>
     <!-- Fixed Logo at Top Left -->
     <div class="fixed top-4 left-4 z-50">
-      <a 
-        href="/#" 
+      <NuxtLink 
+        to="/" 
         class="block cursor-pointer"
       >
         <img
@@ -13,7 +13,7 @@
           class="h-12 w-auto transition-transform duration-300 hover:scale-105"
           @load="animateLogo"
         />
-      </a>
+      </NuxtLink>
     </div>
 
     <!-- Menu Toggle Button -->
@@ -58,7 +58,17 @@
             class="nav-item"
             :data-index="index"
           >
+            <NuxtLink
+              v-if="item.type === 'page'"
+              :to="item.href"
+              @click="handleNavClick"
+              class="group block py-4 px-5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all duration-200 font-medium text-lg relative overflow-hidden"
+            >
+              <span class="relative z-10">{{ item.label }}</span>
+              <span class="absolute inset-0 bg-accent/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+            </NuxtLink>
             <a
+              v-else
               :href="item.href"
               @click="handleNavClick"
               class="group block py-4 px-5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all duration-200 font-medium text-lg relative overflow-hidden"
@@ -131,10 +141,10 @@ import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { gsap } from 'gsap'
 
 const navItems = [
-  { label: 'Home', href: '/#' },
-  { label: 'Projects', href: '/#projects' },
-  { label: 'Skills', href: '/#skills' },
-  { label: 'Contact', href: '/#contact' }
+  { label: 'Home', href: '/', type: 'page' },
+  { label: 'Projects', href: '/projects', type: 'page' },
+  { label: 'Skills', href: '/#skills', type: 'section' },
+  { label: 'Contact', href: '/#contact', type: 'section' }
 ]
 
 const isSidebarOpen = ref(false)
@@ -209,15 +219,17 @@ const closeSidebar = () => {
 
 // Navigation handling
 const handleNavClick = (e: Event) => {
-  e.preventDefault()
-  const target = e.currentTarget as HTMLAnchorElement
-  const href = target.getAttribute('href')
+  const target = e.currentTarget as HTMLAnchorElement | HTMLElement
+  const href = target.getAttribute('href') || target.getAttribute('to')
   
-  if (href) {
+  // Only handle section scrolling for anchor links
+  if (href && href.startsWith('/#')) {
+    e.preventDefault()
+    
     if (href === '/#' || href === '/') {
       // Scroll to top for home
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else if (href.startsWith('/#')) {
+    } else {
       // Extract section id and scroll to it
       const elementId = href.substring(2)
       const element = document.getElementById(elementId)

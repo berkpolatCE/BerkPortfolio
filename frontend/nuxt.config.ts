@@ -2,6 +2,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: false },
   
+  // Enable SPA mode for better client-side routing on static hosting
+  ssr: true,
+  nitro: {
+    preset: 'node-server'
+  },
+  
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
