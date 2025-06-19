@@ -1,15 +1,21 @@
+import os
 from flask import Flask
 from flask_cors import CORS
+from dotenv import load_dotenv
 
 # Import routes using relative imports
 from .routes import home, photo, projects, skills, cv, contact
 from .utils.responses import success_response, error_response
 
+# Load environment variables
+load_dotenv()
+
 # Create Flask app
 app = Flask(__name__)
 
-# Enable CORS for all routes
-CORS(app)
+# Configure CORS with environment variables
+cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
+CORS(app, origins=cors_origins)
 
 # API version prefix
 API_PREFIX = '/api/v1'
@@ -56,4 +62,9 @@ def handle_exception(error):
     )
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Get configuration from environment variables
+    host = os.getenv('FLASK_HOST', '127.0.0.1')
+    port = int(os.getenv('FLASK_PORT', '5000'))
+    debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    
+    app.run(debug=debug, host=host, port=port)
