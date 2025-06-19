@@ -127,27 +127,44 @@ Visit `http://localhost:3000` to view the application.
 
 ## 🚀 Production Deployment
 
-### Using Gunicorn (Recommended)
+### Option 1: Single Service Deployment (Recommended for Render)
 
-1. **Install Dependencies**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
+This approach runs both frontend and backend in a single Render web service.
+
+1. **Deploy to Render**:
+   - Create a **Web Service** on Render
+   - Connect your GitHub repository
+   - Set **Build Command**: `./build.sh`
+   - Set **Start Command**: `./start.sh`
+   - Set **Environment**: `Node`
+
+2. **Environment Variables for Render**:
+   ```env
+   FLASK_ENV=production
+   FLASK_DEBUG=False
+   SECRET_KEY=62260844e1aa9ad63a99f41ce7100404012d33ad112ace2c
+   CORS_ORIGINS=https://your-app-name.onrender.com
+   NUXT_PUBLIC_API_BASE=https://your-app-name.onrender.com/api/v1
    ```
 
-2. **Run with Gunicorn** (from project root):
-   ```bash
-   cd /path/to/BerkPortfolio
-   gunicorn --config backend/gunicorn.conf.py backend.wsgi:app
-   ```
+### Option 2: Separate Services (Traditional Approach)
 
-3. **Alternative Commands**:
+1. **Backend Service** (Web Service):
    ```bash
-   # Simple command
-   gunicorn --bind 0.0.0.0:5000 --workers 2 backend.wsgi:app
+   # Build Command
+   cd backend && pip install -r requirements.txt
    
-   # Production mode
-   FLASK_ENV=production gunicorn --config backend/gunicorn.conf.py backend.wsgi:app
+   # Start Command  
+   cd backend && gunicorn --bind 0.0.0.0:$PORT wsgi:app
+   ```
+
+2. **Frontend Service** (Static Site):
+   ```bash
+   # Build Command
+   cd frontend && npm install && npm run build
+   
+   # Publish Directory
+   frontend/dist
    ```
 
 ### 🔒 Production Environment Variables (Required)

@@ -1,0 +1,35 @@
+{
+  "name": "portfolio-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack portfolio website with Nuxt 3 frontend and Flask backend",
+  "scripts": {
+    "build": "./build.sh",
+    "start": "./start.sh",
+    "dev": "echo 'Use npm run dev in frontend/ and python run.py in backend/ for development'",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:dev": "cd backend && python run.py",
+    "backend:start": "cd backend && gunicorn --config gunicorn.conf.py wsgi:app"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "portfolio",
+    "nuxt3",
+    "flask",
+    "fullstack",
+    "gunicorn"
+  ],
+  "author": "Portfolio Owner",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/berkpolatCE/BerkPortfolio.git"
+  }
+}
