@@ -145,6 +145,14 @@ import { useRoute } from '#app'
 
 const route = useRoute()
 
+// Import scroll utility - delay until after route is initialized
+let scrollToElement: ((elementId: string, offset?: number) => void) | undefined
+
+onMounted(() => {
+  const scrollUtils = useScrollTo()
+  scrollToElement = scrollUtils.scrollToElement
+})
+
 const navItems = [
   { label: 'Home', href: '/', type: 'page' },
   { label: 'Projects', href: '/projects', type: 'page' },
@@ -224,9 +232,6 @@ const closeSidebar = () => {
     clearTimeout(autoHideTimer.value)
   }
 }
-
-// Import scroll utility
-const { scrollToElement } = useScrollTo()
 
 // Navigation handling
 const handleNavClick = (e: Event) => {
