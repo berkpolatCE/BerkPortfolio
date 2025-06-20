@@ -18,6 +18,7 @@
 
     <!-- Menu Toggle Button -->
     <button
+      v-if="isHomePage"
       @click="toggleSidebar"
       class="fixed top-4 right-4 z-50 p-3 rounded-lg bg-primary/20 backdrop-blur-sm border border-border/30 hover:bg-primary/30 transition-all duration-300"
       aria-label="Toggle menu"
@@ -40,6 +41,7 @@
 
     <!-- Vertical Sidebar Navigation -->
     <nav
+      v-if="isHomePage"
       ref="sidebar"
       :class="[
         'fixed top-0 right-0 h-full w-72 bg-primary/95 backdrop-blur-xl border-l border-border/50 z-40',
@@ -112,7 +114,7 @@
 
     <!-- Invisible trigger area for auto-show -->
     <div
-      v-if="!isMobile && !isSidebarOpen"
+      v-if="isHomePage && !isMobile && !isSidebarOpen"
       class="fixed top-0 right-0 w-32 h-full z-30"
       @mouseenter="showSidebar"
       style="background: transparent;"
@@ -128,7 +130,7 @@
       leave-to-class="opacity-0"
     >
       <div
-        v-if="isSidebarOpen && isMobile"
+        v-if="isHomePage && isSidebarOpen && isMobile"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
         @click="closeSidebar"
       ></div>
@@ -137,12 +139,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import { gsap } from 'gsap'
+import { useRoute } from '#app'
+
+const route = useRoute()
 
 const navItems = [
   { label: 'Home', href: '/', type: 'page' },
-  { label: 'Projects', href: '/#projects', type: 'page' },
+  { label: 'Projects', href: '/projects', type: 'page' },
   { label: 'Skills', href: '/#skills', type: 'section' },
   { label: 'Contact', href: '/#contact', type: 'section' }
 ]
@@ -153,6 +158,9 @@ const autoHideTimer = ref<number | null>(null)
 const sidebar = ref<HTMLElement | null>(null)
 const navList = ref<HTMLElement | null>(null)
 const logoImg = ref<HTMLElement | null>(null)
+
+// Check if we're on the home page
+const isHomePage = computed(() => route.path === '/')
 
 // Fetch contact data
 const { data: contactData } = await useAsyncData('contact', () => useApi().getContact())
@@ -217,32 +225,44 @@ const closeSidebar = () => {
   }
 }
 
+// Import scroll utility
+const { scrollToElement } = useScrollTo()
+
 // Navigation handling
 const handleNavClick = (e: Event) => {
   const target = e.currentTarget as HTMLAnchorElement | HTMLElement
   const href = target.getAttribute('href') || target.getAttribute('to')
   
-  // Only handle section scrolling for anchor links
-  if (href && href.startsWith('/#')) {
+  // Handle home button click when already on home page
+  if (href === '/' && isHomePage.value) {
+    e.preventDefault()
+    scrollToElement('') // Scroll to top
+    setTimeout(() => {
+      closeSidebar()
+    }, 300)
+    return
+  }
+  
+  // Handle section scrolling for anchor links when on home page
+  if (href && href.startsWith('/#') && isHomePage.value) {
     e.preventDefault()
     
     if (href === '/#' || href === '/') {
       // Scroll to top for home
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      scrollToElement('')
     } else {
-      // Extract section id and scroll to it
+      // Extract section id and scroll to it with offset
       const elementId = href.substring(2)
-      const element = document.getElementById(elementId)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
+      scrollToElement(elementId, 80) // 80px offset for fixed header
     }
   }
   
-  // Close sidebar after navigation
-  setTimeout(() => {
-    closeSidebar()
-  }, 300)
+  // Close sidebar after navigation (only if on home page)
+  if (isHomePage.value) {
+    setTimeout(() => {
+      closeSidebar()
+    }, 300)
+  }
 }
 
 // Logo animation
@@ -287,6 +307,14 @@ watch(isSidebarOpen, async (newVal) => {
     })
   }
 })
+
+// Watch route changes to manage sidebar visibility
+watch(() => route.path, (newPath) => {
+  if (newPath !== '/') {
+    // Close sidebar when navigating away from home
+    closeSidebar()
+  }
+}, { immediate: true })
 
 onMounted(() => {
   checkMobile()

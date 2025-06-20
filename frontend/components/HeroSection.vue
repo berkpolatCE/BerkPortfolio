@@ -79,12 +79,12 @@
         
         <!-- CTA Buttons -->
         <div ref="heroCta" class="flex flex-col sm:flex-row gap-4 justify-center opacity-0">
-          <a href="#projects" class="btn-primary">
+          <button @click="handleScrollClick($event, '#projects')" class="btn-primary">
             View Projects
-          </a>
-          <a href="#contact" class="btn-secondary">
+          </button>
+          <button @click="handleScrollClick($event, '#contact')" class="btn-secondary">
             Get in Touch
-          </a>
+          </button>
         </div>
         
       </div>
@@ -103,6 +103,14 @@ const heroTagline = ref(null)
 const heroInfo = ref(null)
 const heroCta = ref(null)
 const scrollIndicator = ref(null)
+
+// Import scroll utility
+const { handleAnchorClick } = useScrollTo()
+
+// Handle scroll click
+const handleScrollClick = (event: Event, href: string) => {
+  handleAnchorClick(event, href, 80) // 80px offset for fixed header
+}
 
 // Fetch home data
 const { data: homeData } = await useAsyncData('home', () => useApi().getHome())
@@ -181,11 +189,11 @@ function createParticles() {
 
 <style scoped>
 .btn-primary {
-  @apply px-8 py-4 bg-accent text-primary font-semibold rounded-lg transition-all duration-300 hover:bg-accent/90 hover:scale-105 hover:shadow-xl hover:shadow-accent/20;
+  @apply inline-block px-8 py-4 bg-accent text-primary font-semibold rounded-lg transition-all duration-300 hover:bg-accent/90 hover:scale-105 hover:shadow-xl hover:shadow-accent/20 cursor-pointer;
 }
 
 .btn-secondary {
-  @apply px-8 py-4 border-2 border-gray-400 text-gray-200 font-semibold rounded-lg transition-all duration-300 hover:border-accent hover:text-accent hover:scale-105;
+  @apply inline-block px-8 py-4 border-2 border-gray-400 text-gray-200 font-semibold rounded-lg transition-all duration-300 hover:border-accent hover:text-accent hover:scale-105 cursor-pointer;
 }
 
 .particle {
