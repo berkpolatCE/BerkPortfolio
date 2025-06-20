@@ -142,7 +142,7 @@ import { gsap } from 'gsap'
 
 const navItems = [
   { label: 'Home', href: '/', type: 'page' },
-  { label: 'Projects', href: '/projects', type: 'page' },
+  { label: 'Projects', href: '/#projects', type: 'page' },
   { label: 'Skills', href: '/#skills', type: 'section' },
   { label: 'Contact', href: '/#contact', type: 'section' }
 ]
