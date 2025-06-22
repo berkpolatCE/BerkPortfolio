@@ -155,7 +155,7 @@ onMounted(() => {
 
 const navItems = [
   { label: 'Home', href: '/', type: 'page' },
-  { label: 'Projects', href: '/projects', type: 'page' },
+  { label: 'Projects', href: '/#projects', type: 'section' },
   { label: 'Skills', href: '/#skills', type: 'section' },
   { label: 'Contact', href: '/#contact', type: 'section' }
 ]
@@ -168,7 +168,7 @@ const navList = ref<HTMLElement | null>(null)
 const logoImg = ref<HTMLElement | null>(null)
 
 // Check if we're on the home page
-const isHomePage = computed(() => route.path === '/')
+const isHomePage = ref(route.path === '/')
 
 // Fetch contact data
 const { data: contactData } = await useAsyncData('contact', () => useApi().getContact())
@@ -239,7 +239,7 @@ const handleNavClick = (e: Event) => {
   const href = target.getAttribute('href') || target.getAttribute('to')
   
   // Handle home button click when already on home page
-  if (href === '/' && isHomePage.value) {
+  if (href === '/' && isHomePage.value && scrollToElement) {
     e.preventDefault()
     scrollToElement('') // Scroll to top
     setTimeout(() => {
@@ -249,7 +249,7 @@ const handleNavClick = (e: Event) => {
   }
   
   // Handle section scrolling for anchor links when on home page
-  if (href && href.startsWith('/#') && isHomePage.value) {
+  if (href && href.startsWith('/#') && isHomePage.value && scrollToElement) {
     e.preventDefault()
     
     if (href === '/#' || href === '/') {
@@ -262,12 +262,10 @@ const handleNavClick = (e: Event) => {
     }
   }
   
-  // Close sidebar after navigation (only if on home page)
-  if (isHomePage.value) {
-    setTimeout(() => {
-      closeSidebar()
-    }, 300)
-  }
+  // Close sidebar after navigation
+  setTimeout(() => {
+    closeSidebar()
+  }, 300)
 }
 
 // Logo animation
@@ -315,9 +313,19 @@ watch(isSidebarOpen, async (newVal) => {
 
 // Watch route changes to manage sidebar visibility
 watch(() => route.path, (newPath) => {
+  // Update isHomePage reactively
+  isHomePage.value = newPath === '/'
+  
   if (newPath !== '/') {
     // Close sidebar when navigating away from home
     closeSidebar()
+  } else {
+    // Reset sidebar state when returning to home
+    isSidebarOpen.value = false
+    if (autoHideTimer.value) {
+      clearTimeout(autoHideTimer.value)
+      autoHideTimer.value = null
+    }
   }
 }, { immediate: true })
 
@@ -327,6 +335,11 @@ onMounted(() => {
   
   // Initial logo animation
   animateLogo()
+  
+  // Ensure sidebar state is correct on mount
+  if (!isHomePage.value) {
+    isSidebarOpen.value = false
+  }
 })
 
 onUnmounted(() => {
