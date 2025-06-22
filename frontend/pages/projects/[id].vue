@@ -3,12 +3,12 @@
     <!-- Hero section -->
     <section class="pt-20 pb-12 bg-secondary/30">
       <div class="container mx-auto px-6">
-        <NuxtLink to="/projects" class="inline-flex items-center text-text-secondary hover:text-accent mb-6 transition-colors">
+        <a href="/projects" class="inline-flex items-center text-text-secondary hover:text-accent mb-6 transition-colors">
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
           Back to projects
-        </NuxtLink>
+        </a>
         
         <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">{{ project.title }}</h1>
         <p class="text-text-secondary text-lg mb-8">{{ project.description }}</p>

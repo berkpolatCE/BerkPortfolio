@@ -93,7 +93,8 @@ const handleMouseLeave = () => {
 }
 
 const navigateToProject = () => {
-  router.push(`/projects/${props.project.id}`)
+  // Force full page reload for project pages
+  window.location.href = `/projects/${props.project.id}`
 }
 
 const getTechTagClass = (tech: string): string => {

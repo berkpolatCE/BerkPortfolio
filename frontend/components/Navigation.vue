@@ -2,8 +2,8 @@
   <div>
     <!-- Fixed Logo at Top Left -->
     <div class="fixed top-4 left-4 z-50">
-      <NuxtLink 
-        to="/" 
+      <a 
+        href="/" 
         class="block cursor-pointer"
       >
         <img
@@ -13,7 +13,7 @@
           class="h-12 w-auto transition-transform duration-300 hover:scale-105"
           @load="animateLogo"
         />
-      </NuxtLink>
+      </a>
     </div>
 
     <!-- Menu Toggle Button -->
@@ -63,7 +63,7 @@
             <NuxtLink
               v-if="item.type === 'page'"
               :to="item.href"
-              @click.native="handleNavClick"
+              @click.native="(e) => handleNavClick(e, item)"
               class="group block py-4 px-5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all duration-200 font-medium text-lg relative overflow-hidden"
             >
               <span class="relative z-10">{{ item.label }}</span>
@@ -72,7 +72,7 @@
             <a
               v-else
               :href="item.href"
-              @click="handleNavClick"
+              @click="(e) => handleNavClick(e, item)"
               class="group block py-4 px-5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all duration-200 font-medium text-lg relative overflow-hidden"
             >
               <span class="relative z-10">{{ item.label }}</span>
@@ -154,7 +154,7 @@ onMounted(() => {
 })
 
 const navItems = [
-  { label: 'Home', href: '/', type: 'page' },
+  { label: 'Home', href: '/', type: 'page', forceReload: true },
   { label: 'Projects', href: '/#projects', type: 'section' },
   { label: 'Skills', href: '/#skills', type: 'section' },
   { label: 'Contact', href: '/#contact', type: 'section' }
@@ -234,9 +234,20 @@ const closeSidebar = () => {
 }
 
 // Navigation handling
-const handleNavClick = (e: Event) => {
+const handleNavClick = (e: Event, item?: any) => {
   const target = e.currentTarget as HTMLAnchorElement | HTMLElement
   const href = target.getAttribute('href') || target.getAttribute('to')
+  
+  // Handle home button click
+  if (href === '/' && item?.forceReload) {
+    e.preventDefault()
+    closeSidebar()
+    // Force full page reload for home
+    setTimeout(() => {
+      window.location.href = '/'
+    }, 300)
+    return
+  }
   
   // Handle home button click when already on home page
   if (href === '/' && isHomePage.value && scrollToElement) {
