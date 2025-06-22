@@ -164,57 +164,61 @@ const getCategoryColor = (categoryId: string) => {
 
 // Animation state tracking
 const isAnimating = ref(false)
-const pendingCategory = ref<string | null>(null)
+
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+const fadeOutLines = () => {
+  return new Promise<void>(resolve => {
+    if (linesGroup.value) {
+      const lines = linesGroup.value.querySelectorAll('path')
+      if (lines.length > 0) {
+        gsap.to(lines, {
+          opacity: 0,
+          duration: 0.3,
+          ease: 'power2.in',
+          stagger: 0.02,
+          onComplete: () => {
+            while (linesGroup.value?.firstChild) {
+              linesGroup.value.removeChild(linesGroup.value.firstChild)
+            }
+            if (linesTimeline) {
+              linesTimeline.kill()
+              linesTimeline = null
+            }
+            resolve()
+          }
+        })
+        return
+      }
+    }
+    resolve()
+  })
+}
 
 // Toggle category expansion
-const toggleCategory = (categoryId: string) => {
-  // Prevent clicks during animation
+const toggleCategory = async (categoryId: string) => {
   if (isAnimating.value) return
-  
+  isAnimating.value = true
+
   if (expandedCategory.value === categoryId) {
     // Closing current category
-    isAnimating.value = true
+    await fadeOutLines()
     expandedCategory.value = null
-    setTimeout(() => {
-      isAnimating.value = false
-    }, 600)
+    await wait(500)
   } else {
-    // Opening or switching category
-    isAnimating.value = true
-    
     if (expandedCategory.value) {
-      // Smooth transition between categories
+      // Switching categories
       isSwitchingCategories = true
-      
-      // First, fade out the lines
-      if (linesGroup.value) {
-        const lines = linesGroup.value.querySelectorAll('path')
-        if (lines.length > 0) {
-          gsap.to(lines, {
-            opacity: 0,
-            duration: 0.2,
-            ease: 'power2.in'
-          })
-        }
-      }
-      
-      // Then switch categories with a slight delay
-      setTimeout(() => {
-        expandedCategory.value = categoryId
-        setTimeout(() => {
-          isAnimating.value = false
-          isSwitchingCategories = false
-        }, 600)
-      }, 150)
-    } else {
-      // No category open, just expand
-      isSwitchingCategories = false
-      expandedCategory.value = categoryId
-      setTimeout(() => {
-        isAnimating.value = false
-      }, 600)
+      await fadeOutLines()
+      expandedCategory.value = null
+      await nextTick()
+      await wait(200)
     }
+    expandedCategory.value = categoryId
   }
+
+  isAnimating.value = false
+  isSwitchingCategories = false
 }
 
 // Track if lines are currently being drawn
@@ -504,19 +508,19 @@ watch(expandedCategory, async (newVal, oldVal) => {
 
 /* Transitions */
 .skills-tree-enter-active {
-  transition: opacity 0.4s ease-out;
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  transform-origin: top;
 }
 
 .skills-tree-leave-active {
-  transition: opacity 0.2s ease-in;
+  transition: opacity 0.4s ease-in, transform 0.4s ease-in;
+  transform-origin: top;
 }
 
-.skills-tree-enter-from {
-  opacity: 0;
-}
-
+.skills-tree-enter-from,
 .skills-tree-leave-to {
   opacity: 0;
+  transform: translateY(-10px);
 }
 
 /* Disable Vue's default transitions for skill items since we're using GSAP */

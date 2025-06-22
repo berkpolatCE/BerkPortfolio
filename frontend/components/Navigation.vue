@@ -154,7 +154,7 @@ onMounted(() => {
 })
 
 const navItems = [
-  { label: 'Home', href: '/', type: 'page', forceReload: true },
+  { label: 'Home', href: '/', type: 'page' },
   { label: 'Projects', href: '/#projects', type: 'section' },
   { label: 'Skills', href: '/#skills', type: 'section' },
   { label: 'Contact', href: '/#contact', type: 'section' }
@@ -238,21 +238,15 @@ const handleNavClick = (e: Event, item?: any) => {
   const target = e.currentTarget as HTMLAnchorElement | HTMLElement
   const href = target.getAttribute('href') || target.getAttribute('to')
   
-  // Handle home button click
-  if (href === '/' && item?.forceReload) {
+  // Handle home button click - always scroll to top instead of reload
+  if (href === '/') {
     e.preventDefault()
-    closeSidebar()
-    // Force full page reload for home
-    setTimeout(() => {
-      window.location.href = '/'
-    }, 300)
-    return
-  }
-  
-  // Handle home button click when already on home page
-  if (href === '/' && isHomePage.value && scrollToElement) {
-    e.preventDefault()
-    scrollToElement('') // Scroll to top
+    if (scrollToElement) {
+      scrollToElement('') // Scroll to top
+    } else {
+      // Fallback to window.scrollTo if scrollToElement isn't loaded yet
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
     setTimeout(() => {
       closeSidebar()
     }, 300)
