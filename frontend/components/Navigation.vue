@@ -63,7 +63,7 @@
             <NuxtLink
               v-if="item.type === 'page'"
               :to="item.href"
-              @click="handleNavClick"
+              @click.native="handleNavClick"
               class="group block py-4 px-5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all duration-200 font-medium text-lg relative overflow-hidden"
             >
               <span class="relative z-10">{{ item.label }}</span>
@@ -316,18 +316,31 @@ watch(() => route.path, (newPath) => {
   // Update isHomePage reactively
   isHomePage.value = newPath === '/'
   
-  if (newPath !== '/') {
-    // Close sidebar when navigating away from home
+  // Always close sidebar when route changes
+  if (isSidebarOpen.value) {
     closeSidebar()
-  } else {
-    // Reset sidebar state when returning to home
-    isSidebarOpen.value = false
-    if (autoHideTimer.value) {
-      clearTimeout(autoHideTimer.value)
-      autoHideTimer.value = null
-    }
+  }
+  
+  // Clear any auto-hide timers
+  if (autoHideTimer.value) {
+    clearTimeout(autoHideTimer.value)
+    autoHideTimer.value = null
   }
 }, { immediate: true })
+
+// Global click handler to close sidebar when navigating via external links
+const handleGlobalClick = (e: MouseEvent) => {
+  const target = e.target as HTMLElement
+  const link = target.closest('a')
+  
+  if (link && isSidebarOpen.value && !sidebar.value?.contains(link)) {
+    const href = link.getAttribute('href')
+    // Close sidebar for any navigation that leaves the current page
+    if (href && !href.startsWith('#') && href !== '/') {
+      closeSidebar()
+    }
+  }
+}
 
 onMounted(() => {
   checkMobile()
@@ -340,10 +353,14 @@ onMounted(() => {
   if (!isHomePage.value) {
     isSidebarOpen.value = false
   }
+  
+  // Add global click handler
+  document.addEventListener('click', handleGlobalClick)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
+  document.removeEventListener('click', handleGlobalClick)
   if (autoHideTimer.value) {
     clearTimeout(autoHideTimer.value)
   }
